@@ -1,4 +1,4 @@
-package me.max.megachat.megachat;
+package me.max.megachat;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
