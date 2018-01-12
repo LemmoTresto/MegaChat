@@ -31,6 +31,7 @@ public final class MegaChat extends JavaPlugin {
 
         //setup api.
         api = new Api();
+
     }
 
     @Override
