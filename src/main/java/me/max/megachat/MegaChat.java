@@ -1,18 +1,18 @@
 package me.max.megachat;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MegaChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         saveDefaultConfig();
+        new Metrics(this);
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         saveConfig();
     }
 
