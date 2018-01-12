@@ -1,4 +1,4 @@
-# MegaChat
+![](https://cdn.discordapp.com/attachments/283323039670730753/401403587915153418/MegaChat.png)
 
 [![Jenkins](https://ci.scarsz.me/buildStatus/icon?job=DiscordSRV)](https://ci.lemmotresto.com/job/MegaChat/)
 [![Discord](https://discordapp.com/api/guilds/348405921799471105/widget.png)](https://lemmotresto.com/discord)
