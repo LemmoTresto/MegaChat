@@ -1,6 +1,6 @@
 name: MegaChat
 version: ${project.version}
-main: me.max.megachat.megachat.MegaChat
+main: MegaChat
 authors: [LemmoTresto]
 description: An easy to use chat plugin with many features.
 website: lemmotresto.com
