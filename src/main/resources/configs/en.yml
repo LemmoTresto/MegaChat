@@ -1,0 +1,20 @@
+# Do not touch! This is for the plugin only.
+version: "1.0"
+current-language: "english"
+
+# Supported languages: english
+language: "english"
+
+# 0 = No debug, 1 = Debug without stacktrace's, 2 = Debug with stacktrace's.
+debug-mode: 0
+
+# Have a separate chat channel per world.
+# All-worlds, do all worlds have a separate chat?
+# Whitelisted world, worlds where there are separated chats. This is not used if all-worlds is set to true
+# Blacklisted worlds, worlds where there is no separate chat. This is not used if all-worlds is set to false
+per-world-chat:
+  enabled: false
+  all-worlds: true
+  whitelisted-worlds: []
+  blacklisted-worlds: []
+

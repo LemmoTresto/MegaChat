@@ -1,36 +1,71 @@
 package me.max.megachat;
 
 import me.max.megachat.api.Api;
+import me.max.megachat.api.ApiManager;
+import me.max.megachat.channels.ChannelManager;
 import me.max.megachat.listeners.ChatListener;
 import me.max.megachat.util.ConfigUtil;
 import me.max.megachat.util.MessagesUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public final class MegaChat extends JavaPlugin {
 
-    private Api api;
+    private static Api api;
+    private ApiManager apiManager;
+    private ChannelManager channelManager;
     private Metrics metrics;
-    private File configFile = new File(getDataFolder() + "/config.yml");
-    private File messagesFile = new File(getDataFolder() + "/messages.yml");
 
     @Override
     public void onEnable() {
-        //if files not present then create them
-        //message and config files.
-        ConfigUtil.saveDefaultConfig(configFile);
-        MessagesUtil.saveDefaultMessages(messagesFile);
+        //if files not present then create them    //message and configs files.
+        ConfigUtil.saveDefaultConfig(this);
+        MessagesUtil.saveDefaultMessages(this);
 
         //setup bstats metrics
-        metrics = new Metrics(this);
+        info("Initialising Bstats metrics..");
+        try {
+            metrics = new Metrics(this);
+            info("Initialised metrics successfully.");
+        } catch (Exception e) {
+            warning("Could not initialise Bstats metrics. Disabled metrics.");
+            metrics = null;
+            if (getConfig().getInt("debugMode") == 2) {
+                e.printStackTrace();
+            }
+        }
 
         //init listeners which register themselves.
-        new ChatListener(this);
+        info("Initialising listeners..");
+        try {
+            new ChatListener(this, apiManager);
+            info("Initialised listeners successfully.");
+        } catch (Exception e) {
+            error("Could not initialise listeners. Shutting down..");
+            e.printStackTrace();
+            getPluginLoader().disablePlugin(this);
+        }
+
+        info("Initialising channel manager..");
+        try {
+            channelManager = new ChannelManager();
+        } catch (Exception e) {
+            error("Could not initialise channel manager. Shutting down..");
+            e.printStackTrace();
+            getPluginLoader().disablePlugin(this);
+        }
 
         //setup api.
-        api = new Api();
+        info("Initialising API..");
+        try {
+            apiManager = new ApiManager();
+            api = new Api(apiManager, channelManager);
+            info("Initialised API successfully.");
+        } catch (Exception e) {
+            error("Could not initialise API. Shutting down..");
+            e.printStackTrace();
+            getPluginLoader().disablePlugin(this);
+        }
 
     }
 
@@ -55,7 +90,7 @@ public final class MegaChat extends JavaPlugin {
         return metrics;
     }
 
-    public Api getApi(){
+    public static Api getApi() {
         return api;
     }
 

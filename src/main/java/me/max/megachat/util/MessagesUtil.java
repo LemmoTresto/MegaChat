@@ -1,25 +1,44 @@
 package me.max.megachat.util;
 
 import me.max.megachat.MegaChat;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class MessagesUtil {
 
-    public static void saveDefaultMessages(File messagesFile){
-        if (!messagesFile.exists()){
-            saveResource("messages/en.yml", messagesFile);
+    public static void saveDefaultMessages(MegaChat megaChat) {
+        // yes I know this check is already done in saveResource method but I do this to be able to send messages to the console.
+        if (!(new File(megaChat.getDataFolder(), "messages.yml").exists())) {
+            megaChat.info("Messages file does not exist, creating it now..");
+            saveResource(megaChat, "messages/en.yml", "messages.yml");
+            megaChat.info("Written messages file successfully.");
         }
     }
 
-    private static void saveResource(String resource, File destination) {
+    private static void saveResource(MegaChat megaChat, String resourcePath, String destination) {
+        InputStream in = megaChat.getResource(resourcePath);
+
+        File outFile = new File(megaChat.getDataFolder(), destination);
+        int lastIndex = resourcePath.lastIndexOf('/');
+        File outDir = new File(megaChat.getDataFolder(), destination.substring(0, lastIndex >= 0 ? lastIndex : 0));
+
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+
         try {
-            FileUtils.copyInputStreamToFile(MegaChat.class.getResourceAsStream(resource), destination);
-        } catch (IOException e) {
-            e.printStackTrace();
+            OutputStream out = new FileOutputStream(outFile);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            out.close();
+            in.close();
+        } catch (IOException ex) {
+            megaChat.error("Could not save " + outFile.getName() + " to " + outFile);
+            ex.printStackTrace();
+            megaChat.getPluginLoader().disablePlugin(megaChat);
         }
     }
-
 }
