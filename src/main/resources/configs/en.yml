@@ -8,13 +8,41 @@ language: "english"
 # 0 = No debug, 1 = Debug without stacktrace's, 2 = Debug with stacktrace's.
 debug-mode: 0
 
+# Is metrics enabled? Defaults to true.
+metrics: true
+
 # Have a separate chat channel per world.
 # All-worlds, do all worlds have a separate chat?
 # Whitelisted world, worlds where there are separated chats. This is not used if all-worlds is set to true
 # Blacklisted worlds, worlds where there is no separate chat. This is not used if all-worlds is set to false
+# Usage for whitelisted and blacklisted worlds: ["WorldName1", "WorldName2", "etc"]
 per-world-chat:
   enabled: false
   all-worlds: true
   whitelisted-worlds: []
   blacklisted-worlds: []
+
+# All channels for chat.
+# Every channel has a default format for every group which is not specified.
+# You can add groups with their own format.
+# You can use any placeholder from the placeholder api.
+# Color codes are supported. Use the color code '&'.
+# Placeholders from megachat: %username%, %message% and %displayname%
+# Chat range. The range in blocks a player needs to be to receive the message. Setting this to 0 disables it.
+# Message cost. This is the cost for sending a message in specified channel. Making this negative grants a player money. Setting this to 0 disables it.
+# Chat filter. Leave blank to disable. Usage: {"word": "replacement", "word2": "replacement"}
+# Auto join. Do you join this channel when joining the server? This can only be 'true' for one channel.
+# If channels have the same name the channel most to the top will be used.
+channels:
+  global:
+    formats:
+      - default: "&f%username%: &r%message"
+    chat-range: 0
+    message-cost: 0
+    chat-filter: {}
+    auto-join: true
+
+
+
+
 

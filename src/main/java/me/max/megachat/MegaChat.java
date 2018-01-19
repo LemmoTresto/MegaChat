@@ -3,10 +3,15 @@ package me.max.megachat;
 import me.max.megachat.api.Api;
 import me.max.megachat.api.ApiManager;
 import me.max.megachat.channels.ChannelManager;
+import me.max.megachat.hooks.PlaceholderApiHook;
+import me.max.megachat.hooks.VaultHook;
 import me.max.megachat.listeners.ChatListener;
+import me.max.megachat.listeners.PlayerJoinListener;
+import me.max.megachat.listeners.PlayerQuitListener;
 import me.max.megachat.util.ConfigUtil;
 import me.max.megachat.util.MessagesUtil;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MegaChat extends JavaPlugin {
@@ -15,44 +20,57 @@ public final class MegaChat extends JavaPlugin {
     private ApiManager apiManager;
     private ChannelManager channelManager;
     private Metrics metrics;
+    private PlaceholderApiHook placeholderApiHook;
+    private VaultHook vaultHook;
 
     @Override
     public void onEnable() {
-        //if files not present then create them    //message and configs files.
+        //if files not present then create them
         ConfigUtil.saveDefaultConfig(this);
         MessagesUtil.saveDefaultMessages(this);
 
-        //setup bstats metrics
-        info("Initialising Bstats metrics..");
-        try {
-            metrics = new Metrics(this);
-            info("Initialised metrics successfully.");
-        } catch (Exception e) {
-            warning("Could not initialise Bstats metrics. Disabled metrics.");
-            metrics = null;
-            if (getConfig().getInt("debugMode") == 2) {
-                e.printStackTrace();
+        //todo add config language changing.
+        //check if the desired language is used if not copy
+        if (!getConfig().getString("current-language").equalsIgnoreCase(getConfig().getString("language")))
+
+            //setup bstats metrics
+            if (getConfig().getBoolean("metrics")) {
+                info("Initialising Bstats metrics..");
+                try {
+                    metrics = new Metrics(this);
+                    info("Initialised metrics successfully.");
+                } catch (Exception e) {
+                    warning("Could not initialise Bstats metrics. Disabled metrics.");
+                    metrics = null;
+                    if (getConfig().getInt("debugMode") == 2) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                info("Not initialising Bstats metrics because this is disabled in the config.");
             }
-        }
 
         //init listeners which register themselves.
         info("Initialising listeners..");
         try {
-            new ChatListener(this, apiManager);
+            new ChatListener(this);
             info("Initialised listeners successfully.");
         } catch (Exception e) {
             error("Could not initialise listeners. Shutting down..");
             e.printStackTrace();
-            getPluginLoader().disablePlugin(this);
+            shutdown();
         }
 
+        //init channel manager
         info("Initialising channel manager..");
         try {
-            channelManager = new ChannelManager();
+            channelManager = new ChannelManager(this);
+            new PlayerJoinListener(this);
+            new PlayerQuitListener(this);
         } catch (Exception e) {
             error("Could not initialise channel manager. Shutting down..");
             e.printStackTrace();
-            getPluginLoader().disablePlugin(this);
+            shutdown();
         }
 
         //setup api.
@@ -64,14 +82,28 @@ public final class MegaChat extends JavaPlugin {
         } catch (Exception e) {
             error("Could not initialise API. Shutting down..");
             e.printStackTrace();
-            getPluginLoader().disablePlugin(this);
+            shutdown();
+        }
+
+        //hooks
+        info("Initialising hooks..");
+        try {
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+                placeholderApiHook = new PlaceholderApiHook();
+            info("Hooks - Successfully hooked into PlaceholderAPI");
+            if (Bukkit.getPluginManager().isPluginEnabled("Vault")) vaultHook = new VaultHook();
+            info("Hooks - Successfully hooked into Vault.");
+        } catch (Exception e) {
+            warning("Hooks - Something went wrong initialising.");
+            if (getConfig().getInt("debug-mode") == 2) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     @Override
     public void onDisable() {
-        saveConfig();
     }
 
     public void info(String info){
@@ -86,12 +118,31 @@ public final class MegaChat extends JavaPlugin {
         this.getLogger().severe(error);
     }
 
-    public Metrics getMetrics(){
-        return metrics;
+    public void shutdown() {
+        Bukkit.getServer().getPluginManager().disablePlugin(this);
     }
 
     public static Api getApi() {
         return api;
     }
 
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public ApiManager getApiManager() {
+        return apiManager;
+    }
+
+    public ChannelManager getChannelManager() {
+        return channelManager;
+    }
+
+    public PlaceholderApiHook getPlaceholderApiHook() {
+        return placeholderApiHook;
+    }
+
+    public VaultHook getVaultHook() {
+        return vaultHook;
+    }
 }

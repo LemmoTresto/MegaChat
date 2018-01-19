@@ -4,27 +4,33 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public class Channel {
 
     private String name;
     private List<Player> members;
-    private String format;
+    private Map<String, String> formats;
 
     private List<World> worlds;
 
     //zero or null means off.
     private int chatRange;
     private double messageCost;
+    private Map<String, String> chatFilter;
+
+    private boolean autoJoin;
 
 
-    public Channel(String name, List<Player> members, String format, List<World> worlds, int chatRange, double messageCost) {
+    public Channel(String name, List<Player> members, Map<String, String> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
         this.name = name;
         this.members = members;
-        this.format = format;
+        this.formats = formats;
         this.worlds = worlds;
         this.chatRange = chatRange;
         this.messageCost = messageCost;
+        this.chatFilter = chatFilter;
+        this.autoJoin = autoJoin;
     }
 
     public void addMember(Player member) {
@@ -35,6 +41,34 @@ public class Channel {
     public void removeMember(Player member) {
         if (!members.contains(member)) return;
         members.remove(member);
+    }
+
+    public void addFormat(String name, String format) {
+        formats.put(name, format);
+    }
+
+    public void removeFormat(String name) {
+        formats.remove(name);
+    }
+
+    public String getFormat(String name) {
+        return formats.get(name);
+    }
+
+    public void addWorld(World world) {
+        worlds.add(world);
+    }
+
+    public void removeWorld(World world) {
+        worlds.remove(world);
+    }
+
+    public void addChatFilter(String word, String replacement) {
+        chatFilter.put(word, replacement);
+    }
+
+    public void removeChatFilter(String word) {
+        chatFilter.remove(word);
     }
 
     public int getChatRange() {
@@ -53,8 +87,8 @@ public class Channel {
         return worlds;
     }
 
-    public String getFormat() {
-        return format;
+    public Map<String, String> getFormats() {
+        return formats;
     }
 
     public String getName() {
@@ -65,8 +99,8 @@ public class Channel {
         this.chatRange = chatRange;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setFormats(Map<String, String> formats) {
+        this.formats = formats;
     }
 
     public void setMembers(List<Player> members) {
@@ -85,49 +119,19 @@ public class Channel {
         this.worlds = worlds;
     }
 
-    // I added this cause I'm new to builders and liked this.
-    // Probably not useful.
-    // Maybe for the api.
-    public static class Builder {
-        private String name;
-        private List<Player> members;
-        private String format;
-        private List<World> worlds;
-        private int chatRange;
-        private double messageCost;
+    public Map<String, String> getChatFilter() {
+        return chatFilter;
+    }
 
-        public Channel build() {
-            return new Channel(name, members, format, worlds, chatRange, messageCost);
-        }
+    public void setChatFilter(Map<String, String> chatFilter) {
+        this.chatFilter = chatFilter;
+    }
 
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
+    public boolean isAutoJoin() {
+        return autoJoin;
+    }
 
-        public Builder setMembers(List<Player> members) {
-            this.members = members;
-            return this;
-        }
-
-        public Builder setFormat(String format) {
-            this.format = format;
-            return this;
-        }
-
-        public Builder setWorlds(List<World> worlds) {
-            this.worlds = worlds;
-            return this;
-        }
-
-        public Builder setChatRange(int chatRange) {
-            this.chatRange = chatRange;
-            return this;
-        }
-
-        public Builder setMessageCost(double messageCost) {
-            this.messageCost = messageCost;
-            return this;
-        }
+    public void setAutoJoin(boolean autoJoin) {
+        this.autoJoin = autoJoin;
     }
 }
