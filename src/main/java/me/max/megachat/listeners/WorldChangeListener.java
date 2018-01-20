@@ -24,24 +24,29 @@ import me.max.megachat.MegaChat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-public class PlayerJoinListener implements Listener {
+public class WorldChangeListener implements Listener {
 
     private MegaChat megaChat;
 
-    public PlayerJoinListener(MegaChat megaChat) {
+    public WorldChangeListener(MegaChat megaChat) {
         this.megaChat = megaChat;
 
-        //register myself.
+        //register
         this.megaChat.getServer().getPluginManager().registerEvents(this, megaChat);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        // add player to autojoin chat channel.
-        //todo unless they have a chatroom
-        //todo unless they have a per world chat.
-        megaChat.getChannelManager().addPlayerToAutoJoinChannel(event.getPlayer());
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        // make sure it's enabled.
+        if (megaChat.getConfig().getBoolean("per-world-chat.enabled")) {
+            // check if per-world-chat channel exists.
+            if (megaChat.getChannelManager().getChannelByName(event.getPlayer().getWorld().getName()) != null) {
+                //remove and add player again to right channel.
+                megaChat.getChannelManager().removePlayerFromChannel(event.getPlayer());
+                megaChat.getChannelManager().getChannelByName(event.getPlayer().getWorld().getName()).addMember(event.getPlayer());
+            }
+        }
     }
 }

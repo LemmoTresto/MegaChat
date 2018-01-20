@@ -22,6 +22,7 @@ package me.max.megachat.channels;
 
 import me.max.megachat.MegaChat;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -40,6 +41,34 @@ public class ChannelManager {
     public ChannelManager(MegaChat megaChat) {
         this.megaChat = megaChat;
 
+        // make sure it is enabled.
+        if (megaChat.getConfig().getBoolean("per-world-chat.enabled")) {
+            List<World> worlds;
+            // check if all worlds are per world chat.
+            if (megaChat.getConfig().getBoolean("per-world-chat.all-worlds")) {
+                worlds = Bukkit.getWorlds();
+                for (String worldName : megaChat.getConfig().getStringList("per=world-chat.blacklisted-worlds")) {
+                    worlds.remove(Bukkit.getWorld(worldName));
+                }
+            } else {
+                worlds = new ArrayList<>();
+                for (String worldName : megaChat.getConfig().getStringList("per=world-chat.whitelisted-worlds")) {
+                    worlds.add(Bukkit.getWorld(worldName));
+                }
+            }
+            for (World world : worlds) {
+                List<Player> members = new ArrayList<>();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (p.getWorld().equals(world)) {
+                        members.add(p);
+                    }
+                }
+                List<World> worldForChannel = new ArrayList<>();
+                worldForChannel.add(world);
+                addChannel(new Channel(world.getName(), members, getAutoJoinChannel().getFormats(), worldForChannel, getAutoJoinChannel().getChatRange(), getAutoJoinChannel().getMessageCost(), getAutoJoinChannel().getChatFilter(), false));
+            }
+        }
+
         ConfigurationSection channelsSection = megaChat.getConfig().getConfigurationSection("channels");
 
         for (String channelName : channelsSection.getKeys(false)) {
@@ -49,6 +78,13 @@ public class ChannelManager {
 
             if (channelsSection.getBoolean(channelName + ".auto-join")) members.addAll(Bukkit.getOnlinePlayers());
 
+            // remove players who already have a channel from per-world-chat.
+            for (Player p : members) {
+                if (getChannelByPlayer(p) != null) {
+                    members.remove(p);
+                }
+            }
+
             ConfigurationSection formatsSection = channelsSection.getConfigurationSection(channelName + ".formats");
             for (String name : formatsSection.getKeys(false)) formats.put(name, formatsSection.getString(name));
 
@@ -56,7 +92,7 @@ public class ChannelManager {
             for (String word : chatFilterSection.getKeys(false))
                 chatFilter.put(word, chatFilterSection.getString(word));
 
-            addChannel(new Channel(channelName, members, formats, new ArrayList<>(), channelsSection.getInt(channelName + ".chat-range"), channelsSection.getDouble(channelName + ".message-cost"), chatFilter, channelsSection.getBoolean(channelName + ".auto-join")));
+            addChannel(new Channel(channelName, members, formats, Bukkit.getWorlds(), channelsSection.getInt(channelName + ".chat-range"), channelsSection.getDouble(channelName + ".message-cost"), chatFilter, channelsSection.getBoolean(channelName + ".auto-join")));
         }
     }
 

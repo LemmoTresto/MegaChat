@@ -28,6 +28,7 @@ import me.max.megachat.hooks.VaultHook;
 import me.max.megachat.listeners.ChatListener;
 import me.max.megachat.listeners.PlayerJoinListener;
 import me.max.megachat.listeners.PlayerQuitListener;
+import me.max.megachat.listeners.WorldChangeListener;
 import me.max.megachat.util.ConfigUtil;
 import me.max.megachat.util.MessagesUtil;
 import org.bstats.bukkit.Metrics;
@@ -74,6 +75,9 @@ public final class MegaChat extends JavaPlugin {
         info("Initialising listeners..");
         try {
             new ChatListener(this);
+            new PlayerJoinListener(this);
+            new PlayerQuitListener(this);
+            new WorldChangeListener(this);
             info("Initialised listeners successfully.");
         } catch (Exception e) {
             error("Could not initialise listeners. Shutting down..");
@@ -85,8 +89,6 @@ public final class MegaChat extends JavaPlugin {
         info("Initialising channel manager..");
         try {
             channelManager = new ChannelManager(this);
-            new PlayerJoinListener(this);
-            new PlayerQuitListener(this);
         } catch (Exception e) {
             error("Could not initialise channel manager. Shutting down..");
             e.printStackTrace();

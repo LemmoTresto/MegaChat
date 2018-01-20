@@ -56,36 +56,6 @@ public class ChatListener implements Listener {
             List<Player> playersInRange = megaChat.getChannelManager().getPlayersInChatRange(event.getPlayer(), channel);
         }
 
-        // todo remake this but with channels. Will be done when channels are finished.
-        //get blacklisted worlds
-        //check if per world chat is enabled
-        List<String> blacklistedWorlds = megaChat.getConfig().getStringList("per-world-chat.blacklisted-worlds");
-        if (megaChat.getConfig().getBoolean("per-world-chat.enabled")) {
-            //check if all worlds have a seperate chat and that player is not in a blacklisted world.
-            if (megaChat.getConfig().getBoolean("per-world-chat.all-worlds") && !blacklistedWorlds.contains(event.getPlayer().getWorld().getName())) {
-                // loop over all recipients and remove if not in the same world.
-                for (Player p : event.getRecipients()) {
-                    if (!p.getWorld().equals(event.getPlayer().getWorld())) {
-                        event.getRecipients().remove(p);
-                    }
-                }
-            }
-            // check to make sure player is not in a blacklisted worlds.
-            else if (!blacklistedWorlds.contains(event.getPlayer().getWorld().getName())) {
-                // get all whitelisted worlds
-                List<String> whitelistedWorlds = megaChat.getConfig().getStringList("per-world-chat.whitelisted-worlds");
-                // make sure player is in a whitelisted world.
-                // loop and remove people who are not in this world.
-                if (whitelistedWorlds.contains(event.getPlayer().getWorld().getName())) {
-                    for (Player p : event.getRecipients()) {
-                        if (!p.getWorld().equals(event.getPlayer().getWorld())) {
-                            event.getRecipients().remove(p);
-                        }
-                    }
-                }
-            }
-        }
-
         // increment value of messages processed in bstats metrics.
         MetricsUtil.incrementProcessedMessages(megaChat.getMetrics());
 
