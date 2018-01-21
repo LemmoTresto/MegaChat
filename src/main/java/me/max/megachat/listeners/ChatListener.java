@@ -46,20 +46,59 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onChat(AsyncPlayerChatEvent event){
-        //call pre process event
-        megaChat.getApiManager().callEvent(new PreProcessMessageEvent(event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer())));
+        if (megaChat.getConfig().getBoolean("ignore-cancelled-chat-events") || !event.isCancelled()) {
+            event.setCancelled(false);
 
-        //get channel to forward this message to.
-        Channel channel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
+            //call pre process event
+            megaChat.getApiManager().callEvent(new PreProcessMessageEvent(event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer())));
 
-        if (!(channel.getChatRange() == 0)) {
-            List<Player> playersInRange = megaChat.getChannelManager().getPlayersInChatRange(event.getPlayer(), channel);
+            //get channel to forward this message to.
+            Channel channel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
+
+            //set correct format
+            event.setFormat(getCorrectFormat(channel, event.getPlayer()));
+
+            //todo
+
+            //take message cost if there is one.
+            deductCost(channel, event.getPlayer());
+
+            //remove all players & add ones in chatrange.
+            event.getRecipients().removeAll(event.getRecipients());
+            event.getRecipients().addAll(getPlayersInChatRange(channel, event.getPlayer()));
+
+
+            // increment value of messages processed in bstats metrics.
+            MetricsUtil.incrementProcessedMessages(megaChat.getMetrics());
+
+            //call post process event.
+            megaChat.getApiManager().callEvent(new PostProcessMessageEvent(event.isCancelled(), event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer()), event.getRecipients()));
         }
+    }
 
-        // increment value of messages processed in bstats metrics.
-        MetricsUtil.incrementProcessedMessages(megaChat.getMetrics());
+    private String getCorrectFormat(Channel channel, Player sender) {
+        // check if vault is here.
+        if (megaChat.getVaultHook() != null) {
+            // try to get primary group name.
+            String group = megaChat.getVaultHook().getChat().getPrimaryGroup(sender);
+            if (channel.getFormat(group) != null) {
+                if (megaChat.getPlaceholderApiHook() != null) {
+                    return megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat(group).replace("%username%", sender.getName()).replace("%displayname%", sender.getDisplayName()).replace("%message%", "%2$s"));
+                }
+                return channel.getFormat(group);
+            }
+        }
+        // if none found get default or return a hardcoded one to try and save chat.
+        return channel.getFormats().containsKey("default") ? (megaChat.getPlaceholderApiHook() != null ? megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat("default")) : channel.getFormat("default")) : "%channel% %username%: %message%";
+    }
 
-        //call post process event.
-        megaChat.getApiManager().callEvent(new PostProcessMessageEvent(event.isCancelled(), event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer())));
+    private void deductCost(Channel channel, Player sender) {
+        if (channel.getMessageCost() == 0) return; //0 means this is disabled.
+        megaChat.getVaultHook().takeMessageCost(sender, channel.getMessageCost());
+    }
+
+    private List<Player> getPlayersInChatRange(Channel channel, Player sender) {
+        if (channel.getChatRange() == 0) return channel.getMembers(); //0 means disabled so we return every member.
+        return channel.getPlayersInChatRange(sender);
     }
 }

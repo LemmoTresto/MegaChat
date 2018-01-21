@@ -11,6 +11,9 @@ debug-mode: 0
 # Is metrics enabled? Defaults to true.
 metrics: true
 
+#Do we ignore if chat events are cancelled? Defaults to false.
+ignore-cancelled-chat-events: false
+
 # Have a separate chat channel per world.
 # All-worlds, do all worlds have a separate chat?
 # Whitelisted world, worlds where there are separated chats. This is not used if all-worlds is set to true
@@ -24,23 +27,71 @@ per-world-chat:
   blacklisted-worlds: []
 
 # All channels for chat.
-# Every channel has a default format for every group which is not specified.
-# You can add groups with their own format.
-# You can use any placeholder from the placeholder api.
-# Color codes are supported. Use the color code '&'.
-# Placeholders from megachat: %username%, %message% and %displayname%
+#
+# The chat channel with
+#
+# Formats:
+# Every channel has the default format. This format is created for every Player who does not have a primary group
+# Or his group is not specified in formats OR Vault is not installed. This plugin is necessary to check for the primary group.
+#
+# A format can be added for a specific group:
+# formats:
+#   default:
+#   group-name:
+#   other-group-name:
+#
+# Every format has a format option this option uses the placeholders %channel%, %prefix%, %name%, %suffix%
+# Those placeholders have their own config option under the format option.
+#
+# Example:
+# format: "%prefix% %name% > %message%"
+# prefix: "[RankNameOrAPlaceHolder]"
+# name: "%username%"
+# Would show up in chat as:
+# [RankNameOrAPlaceHolder] LemmoTresto > Hey this is an example!
+#
+# The channel, prefix, name and suffix options also can have tooltips and click_commands.
+# A tooltip is what shows up when you hover over that part of the message.
+# For a new line use \n
+# A click command is what gets auto typed when you click on that part of the message.
+#
+# For all these options you can use all Placeholders from MegaChat
+# You can see all the placeholders here: https://github.com/
+# We also support the PlaceHolder API.
+#
 # Chat range. The range in blocks a player needs to be to receive the message. Setting this to 0 disables it.
-# Message cost. This is the cost for sending a message in specified channel. Making this negative grants a player money. Setting this to 0 disables it.
+#
+# Message cost. This is the cost for sending a message in specified channel. Making this negative grants a player money. Setting this to 0 disables it. Important! You need vault for this to work!
+#
 # Chat filter. Leave blank to disable. Usage: {"word": "replacement", "word2": "replacement"}
+#
 # Auto join. Do you join this channel when joining the server? This can only be 'true' for one channel at a time.
-# If channels have the same name the channel most to the top will be used.
+# Per-world-chat and player created chatrooms have a higher priority over this.
+# The priorities: CHATROOMS > PER-WORLD-CHAT > CHANNELS
+# This means that if there is no chatroom and no per world chat it will automatically go to the channel with auto-join set to true.
+#
 channels:
   global:
     formats:
-      - default: "&f%username%: &r%message"
+      default:
+        format: "<%channel% %prefix% %name% %suffix%>: &r%message%"
+        channel: "[%name%]"
+        prefix: "[Default]"
+        name: "%displayname%"
+        suffix: "is a noob"
+        tooltips:
+          channel: "There are %users% in this channel!\nThere are %active% chatters here."
+          prefix: "This is the default player group.\nNext group: Owner"
+          name: "This player is a member of %channel%"
+          suffix: "You are looking at the suffix of %name%"
+        click_commands:
+          channel: "/chat leave %channel%"
+          prefix: "@default how are you guys?"
+          name: "/pm %username%"
+          suffix: "/pm $username%"
     chat-range: 0
     message-cost: 0
-    chat-filter: {}
+    chat-filter: {"fuck": "fudge", "shit": "poop"}
     auto-join: true
 
 

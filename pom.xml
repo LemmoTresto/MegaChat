@@ -116,6 +116,12 @@
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
+
+        <!-- jitpack -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
 
@@ -149,6 +155,13 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.6</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- text for tooltips -->
+        <dependency>
+            <groupId>com.github.KyoriPowered</groupId>
+            <artifactId>text</artifactId>
+            <version>v1.12-1.2.0</version>
         </dependency>
     </dependencies>
 </project>

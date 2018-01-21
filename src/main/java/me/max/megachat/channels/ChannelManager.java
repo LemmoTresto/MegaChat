@@ -47,12 +47,12 @@ public class ChannelManager {
             // check if all worlds are per world chat.
             if (megaChat.getConfig().getBoolean("per-world-chat.all-worlds")) {
                 worlds = Bukkit.getWorlds();
-                for (String worldName : megaChat.getConfig().getStringList("per=world-chat.blacklisted-worlds")) {
+                for (String worldName : megaChat.getConfig().getStringList("per-world-chat.blacklisted-worlds")) {
                     worlds.remove(Bukkit.getWorld(worldName));
                 }
             } else {
                 worlds = new ArrayList<>();
-                for (String worldName : megaChat.getConfig().getStringList("per=world-chat.whitelisted-worlds")) {
+                for (String worldName : megaChat.getConfig().getStringList("per-world-chat.whitelisted-worlds")) {
                     worlds.add(Bukkit.getWorld(worldName));
                 }
             }
@@ -65,7 +65,7 @@ public class ChannelManager {
                 }
                 List<World> worldForChannel = new ArrayList<>();
                 worldForChannel.add(world);
-                addChannel(new Channel(world.getName(), members, getAutoJoinChannel().getFormats(), worldForChannel, getAutoJoinChannel().getChatRange(), getAutoJoinChannel().getMessageCost(), getAutoJoinChannel().getChatFilter(), false));
+                addChannel(new Channel(world.getName(), ChannelType.WORLD, members, getAutoJoinChannel().getFormats(), worldForChannel, getAutoJoinChannel().getChatRange(), getAutoJoinChannel().getMessageCost(), getAutoJoinChannel().getChatFilter(), false));
             }
         }
 
@@ -92,7 +92,7 @@ public class ChannelManager {
             for (String word : chatFilterSection.getKeys(false))
                 chatFilter.put(word, chatFilterSection.getString(word));
 
-            addChannel(new Channel(channelName, members, formats, Bukkit.getWorlds(), channelsSection.getInt(channelName + ".chat-range"), channelsSection.getDouble(channelName + ".message-cost"), chatFilter, channelsSection.getBoolean(channelName + ".auto-join")));
+            addChannel(new Channel(channelName, ChannelType.CUSTOM, members, formats, Bukkit.getWorlds(), channelsSection.getInt(channelName + ".chat-range"), channelsSection.getDouble(channelName + ".message-cost"), chatFilter, channelsSection.getBoolean(channelName + ".auto-join")));
         }
     }
 
@@ -110,6 +110,34 @@ public class ChannelManager {
             if (channel.isAutoJoin()) {
                 return channel;
             }
+        }
+        return null;
+    }
+
+    public List<Channel> getChannelsByType(ChannelType channelType) {
+        return channelList.stream().filter(channel -> channel.getType().equals(channelType)).collect(Collectors.toList());
+    }
+
+    public Channel getPerWorldChatByWorld(World world) {
+        for (Channel channel : channelList) {
+            if (channel.getType().equals(ChannelType.WORLD) && channel.getName().equalsIgnoreCase(world.getName()))
+                return channel;
+        }
+        return null;
+    }
+
+    public Channel getCustomChatByName(String name) {
+        for (Channel channel : channelList) {
+            if (channel.getType().equals(ChannelType.CUSTOM) && channel.getName().equalsIgnoreCase(name))
+                return channel;
+        }
+        return null;
+    }
+
+    public Channel getChatRoomByName(String name) {
+        for (Channel channel : channelList) {
+            if (channel.getType().equals(ChannelType.CHATROOM) && channel.getName().equalsIgnoreCase(name))
+                return channel;
         }
         return null;
     }
@@ -139,13 +167,5 @@ public class ChannelManager {
     public Channel getChannelByPlayer(Player player) {
         for (Channel channel : channelList) if (channel.getMembers().contains(player)) return channel;
         return null;
-    }
-
-    public List<Player> getPlayersInChatRange(Player sender, Channel channel) {
-        List<Player> playersInRange = new ArrayList<>();
-        for (Player p : channel.getMembers()) {
-            if (p.getLocation().distance(sender.getLocation()) <= channel.getChatRange()) playersInRange.add(p);
-        }
-        return playersInRange;
     }
 }

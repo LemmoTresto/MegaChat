@@ -18,12 +18,12 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.channels;
 
-public class CommandHandler {
-
-    public CommandHandler() {
-
-        //todo
-    }
+//Used to check for the priority of a channel.
+//ChatRoom > World > Custom
+public enum ChannelType {
+    WORLD,
+    CUSTOM,
+    CHATROOM
 }

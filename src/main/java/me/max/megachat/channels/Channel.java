@@ -23,6 +23,7 @@ package me.max.megachat.channels;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ public class Channel {
 
     private String name;
     private List<Player> members;
+    private ChannelType type;
+
     private Map<String, String> formats;
 
     private List<World> worlds;
@@ -42,8 +45,9 @@ public class Channel {
     private boolean autoJoin;
 
 
-    public Channel(String name, List<Player> members, Map<String, String> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
+    public Channel(String name, ChannelType type, List<Player> members, Map<String, String> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
         this.name = name;
+        this.type = type;
         this.members = members;
         this.formats = formats;
         this.worlds = worlds;
@@ -72,7 +76,7 @@ public class Channel {
     }
 
     public String getFormat(String name) {
-        return formats.get(name);
+        return formats.getOrDefault(name, null);
     }
 
     public void addWorld(World world) {
@@ -153,5 +157,21 @@ public class Channel {
 
     public void setAutoJoin(boolean autoJoin) {
         this.autoJoin = autoJoin;
+    }
+
+    public ChannelType getType() {
+        return type;
+    }
+
+    public void setType(ChannelType type) {
+        this.type = type;
+    }
+
+    public List<Player> getPlayersInChatRange(Player player) {
+        List<Player> playersInRange = new ArrayList<>();
+        for (Player p : getMembers()) {
+            if (p.getLocation().distance(player.getLocation()) <= getChatRange()) playersInRange.add(p);
+        }
+        return playersInRange;
     }
 }

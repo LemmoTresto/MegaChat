@@ -23,18 +23,22 @@ package me.max.megachat.api.events;
 import me.max.megachat.channels.Channel;
 import org.bukkit.entity.Player;
 
+import java.util.Set;
+
 public class PostProcessMessageEvent extends MegaChatEvent{
 
     private final boolean cancelled;
     private final String message;
     private final Player sender;
     private final Channel channel;
+    private final Set<Player> recipients;
 
-    public PostProcessMessageEvent(boolean cancelled, String message, Player sender, Channel channel) {
+    public PostProcessMessageEvent(boolean cancelled, String message, Player sender, Channel channel, Set<Player> recipients) {
         this.cancelled = cancelled;
         this.message = message;
         this.sender = sender;
         this.channel = channel;
+        this.recipients = recipients;
     }
 
     public Channel getChannel() {
@@ -51,5 +55,9 @@ public class PostProcessMessageEvent extends MegaChatEvent{
 
     public boolean isCancelled() {
         return cancelled;
+    }
+
+    public Set<Player> getRecipients() {
+        return recipients;
     }
 }

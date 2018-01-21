@@ -21,6 +21,8 @@
 package me.max.megachat.listeners;
 
 import me.max.megachat.MegaChat;
+import me.max.megachat.channels.Channel;
+import me.max.megachat.channels.ChannelType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,11 +43,16 @@ public class WorldChangeListener implements Listener {
     public void onWorldChange(PlayerChangedWorldEvent event) {
         // make sure it's enabled.
         if (megaChat.getConfig().getBoolean("per-world-chat.enabled")) {
+            //make sure he is not in a user created chatroom as those have higher priority.
+            if (megaChat.getChannelManager().getChannelByPlayer(event.getPlayer()).getType().equals(ChannelType.CHATROOM))
+                return;
+
             // check if per-world-chat channel exists.
-            if (megaChat.getChannelManager().getChannelByName(event.getPlayer().getWorld().getName()) != null) {
+            Channel worldChannel = megaChat.getChannelManager().getPerWorldChatByWorld(event.getPlayer().getWorld());
+            if (worldChannel != null) {
                 //remove and add player again to right channel.
                 megaChat.getChannelManager().removePlayerFromChannel(event.getPlayer());
-                megaChat.getChannelManager().getChannelByName(event.getPlayer().getWorld().getName()).addMember(event.getPlayer());
+                worldChannel.addMember(event.getPlayer());
             }
         }
     }
