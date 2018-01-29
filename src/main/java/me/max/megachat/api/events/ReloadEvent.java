@@ -18,19 +18,31 @@
  *
  */
 
-package me.max.megachat.hooks;
+package me.max.megachat.api.events;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.max.megachat.MegaChat;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
-public class PlaceholderApiHook {
+public class ReloadEvent extends MegaChatEvent {
 
-    public PlaceholderApiHook(MegaChat megaChat) {
-        //todo register placeholders.
+    final private boolean cancelled;
+    final private boolean succeeded;
+    final private CommandSender requester;
+
+    public ReloadEvent(boolean cancelled, boolean succeeded, CommandSender requester) {
+        this.cancelled = cancelled;
+        this.succeeded = succeeded;
+        this.requester = requester;
     }
 
-    public String setPlaceholders(Player p, String string) {
-        return PlaceholderAPI.setPlaceholders(p, string);
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public boolean isSucceeded() {
+        return succeeded;
+    }
+
+    public CommandSender getRequester() {
+        return requester;
     }
 }

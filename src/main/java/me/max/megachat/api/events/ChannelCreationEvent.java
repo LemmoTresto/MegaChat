@@ -18,19 +18,19 @@
  *
  */
 
-package me.max.megachat.hooks;
+package me.max.megachat.api.events;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.max.megachat.MegaChat;
-import org.bukkit.entity.Player;
+import me.max.megachat.channels.Channel;
 
-public class PlaceholderApiHook {
+public class ChannelCreationEvent {
 
-    public PlaceholderApiHook(MegaChat megaChat) {
-        //todo register placeholders.
+    private Channel channel;
+
+    public ChannelCreationEvent(Channel channel) {
+        this.channel = channel;
     }
 
-    public String setPlaceholders(Player p, String string) {
-        return PlaceholderAPI.setPlaceholders(p, string);
+    public Channel getChannel() {
+        return channel;
     }
 }

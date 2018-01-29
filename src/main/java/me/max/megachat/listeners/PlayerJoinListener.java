@@ -43,5 +43,6 @@ public class PlayerJoinListener implements Listener {
         //todo unless they have a chatroom
         //todo unless they have a per world chat.
         megaChat.getChannelManager().addPlayerToAutoJoinChannel(event.getPlayer());
+
     }
 }

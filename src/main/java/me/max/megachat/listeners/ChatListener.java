@@ -24,6 +24,7 @@ import me.max.megachat.MegaChat;
 import me.max.megachat.api.events.PostProcessMessageEvent;
 import me.max.megachat.api.events.PreProcessMessageEvent;
 import me.max.megachat.channels.Channel;
+import me.max.megachat.util.MessagesUtil;
 import me.max.megachat.util.MetricsUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,34 +47,38 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onChat(AsyncPlayerChatEvent event){
-        if (megaChat.getConfig().getBoolean("ignore-cancelled-chat-events") || !event.isCancelled()) {
-            event.setCancelled(false);
+        if (event.isCancelled() && !megaChat.getConfig().getBoolean("ignore-cancelled-chat-events")) return;
+        event.setCancelled(false);
 
-            //call pre process event
-            megaChat.getApiManager().callEvent(new PreProcessMessageEvent(event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer())));
+        //call pre process event for api
+        megaChat.getApiManager().callEvent(new PreProcessMessageEvent(event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer())));
 
-            //get channel to forward this message to.
-            Channel channel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
+        //get channel to forward this message to.
+        Channel channel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
 
-            //set correct format
-            event.setFormat(getCorrectFormat(channel, event.getPlayer()));
+        //set correct format
+        //event.setFormat(getCorrectFormat(channel, event.getPlayer()));
+        event.setFormat(channel.getFormat("default").getFormattedMessage(event.getPlayer()));
 
-            //todo
+        //todo
 
-            //take message cost if there is one.
-            deductCost(channel, event.getPlayer());
-
-            //remove all players & add ones in chatrange.
-            event.getRecipients().removeAll(event.getRecipients());
-            event.getRecipients().addAll(getPlayersInChatRange(channel, event.getPlayer()));
-
-
-            // increment value of messages processed in bstats metrics.
-            MetricsUtil.incrementProcessedMessages(megaChat.getMetrics());
-
-            //call post process event.
-            megaChat.getApiManager().callEvent(new PostProcessMessageEvent(event.isCancelled(), event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer()), event.getRecipients()));
+        //take message cost if there is one.
+        if (!deductCost(channel, event.getPlayer())) {
+            if (megaChat.getMessages().getBoolean("message-cost.enabled")) {
+                event.getPlayer().sendMessage(MessagesUtil.getMessage("message-cost.failed", megaChat.getMessages()));
+            }
         }
+
+        //remove all players & add ones in chatrange.
+        event.getRecipients().removeAll(event.getRecipients());
+        event.getRecipients().addAll(getPlayersInChatRange(channel, event.getPlayer()));
+
+
+        // increment value of messages processed in bstats metrics.
+        MetricsUtil.incrementProcessedMessages(megaChat.getMetrics());
+
+        //call post process event for api.
+        megaChat.getApiManager().callEvent(new PostProcessMessageEvent(event.isCancelled(), event.getMessage(), event.getPlayer(), megaChat.getChannelManager().getChannelByPlayer(event.getPlayer()), event.getRecipients()));
     }
 
     private String getCorrectFormat(Channel channel, Player sender) {
@@ -83,18 +88,18 @@ public class ChatListener implements Listener {
             String group = megaChat.getVaultHook().getChat().getPrimaryGroup(sender);
             if (channel.getFormat(group) != null) {
                 if (megaChat.getPlaceholderApiHook() != null) {
-                    return megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat(group).replace("%username%", sender.getName()).replace("%displayname%", sender.getDisplayName()).replace("%message%", "%2$s"));
+                    return megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat(group).getFormattedMessage(sender));
                 }
-                return channel.getFormat(group);
+                return channel.getFormat(group).getFormattedMessage(sender);
             }
         }
-        // if none found get default or return a hardcoded one to try and save chat.
-        return channel.getFormats().containsKey("default") ? (megaChat.getPlaceholderApiHook() != null ? megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat("default")) : channel.getFormat("default")) : "%channel% %username%: %message%";
+        // if none found get default or return null.
+        return channel.getFormat("default") != null ? (megaChat.getPlaceholderApiHook() != null ? megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat("default").getFormattedMessage(sender)) : channel.getFormat("default").getFormattedMessage(sender)) : null;
     }
 
-    private void deductCost(Channel channel, Player sender) {
-        if (channel.getMessageCost() == 0) return; //0 means this is disabled.
-        megaChat.getVaultHook().takeMessageCost(sender, channel.getMessageCost());
+    private boolean deductCost(Channel channel, Player sender) {
+        if (channel.getMessageCost() == 0) return true; //0 means this is disabled.
+        return megaChat.getVaultHook().takeMessageCost(sender, channel.getMessageCost());
     }
 
     private List<Player> getPlayersInChatRange(Channel channel, Player sender) {

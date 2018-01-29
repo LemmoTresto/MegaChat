@@ -20,10 +20,15 @@
 
 package me.max.megachat.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandHandler {
 
-    public CommandHandler() {
+    private List<Object> commandClasses = new ArrayList<>();
 
-        //todo
+    public CommandHandler() {
     }
+
+
 }

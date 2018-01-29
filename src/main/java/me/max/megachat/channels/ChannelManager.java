@@ -41,21 +41,27 @@ public class ChannelManager {
     public ChannelManager(MegaChat megaChat) {
         this.megaChat = megaChat;
 
+        //todo redo this with the new config.
+
         // make sure it is enabled.
         if (megaChat.getConfig().getBoolean("per-world-chat.enabled")) {
             List<World> worlds;
             // check if all worlds are per world chat.
             if (megaChat.getConfig().getBoolean("per-world-chat.all-worlds")) {
                 worlds = Bukkit.getWorlds();
+                // remove blacklisted worlds.
                 for (String worldName : megaChat.getConfig().getStringList("per-world-chat.blacklisted-worlds")) {
                     worlds.remove(Bukkit.getWorld(worldName));
                 }
             } else {
+                // no all worlds so we use the whitelist.
                 worlds = new ArrayList<>();
+                // add worlds from whitelist
                 for (String worldName : megaChat.getConfig().getStringList("per-world-chat.whitelisted-worlds")) {
                     worlds.add(Bukkit.getWorld(worldName));
                 }
             }
+            // add members who are in the world
             for (World world : worlds) {
                 List<Player> members = new ArrayList<>();
                 for (Player p : Bukkit.getOnlinePlayers()) {
@@ -63,8 +69,10 @@ public class ChannelManager {
                         members.add(p);
                     }
                 }
+                // create list and add the world in it.
                 List<World> worldForChannel = new ArrayList<>();
                 worldForChannel.add(world);
+                //create channel for world with type world.
                 addChannel(new Channel(world.getName(), ChannelType.WORLD, members, getAutoJoinChannel().getFormats(), worldForChannel, getAutoJoinChannel().getChatRange(), getAutoJoinChannel().getMessageCost(), getAutoJoinChannel().getChatFilter(), false));
             }
         }
@@ -73,7 +81,7 @@ public class ChannelManager {
 
         for (String channelName : channelsSection.getKeys(false)) {
             List<Player> members = new ArrayList<>();
-            Map<String, String> formats = new HashMap<>();
+            List<Format> formats = new ArrayList<>();
             Map<String, String> chatFilter = new HashMap<>();
 
             if (channelsSection.getBoolean(channelName + ".auto-join")) members.addAll(Bukkit.getOnlinePlayers());
@@ -86,7 +94,8 @@ public class ChannelManager {
             }
 
             ConfigurationSection formatsSection = channelsSection.getConfigurationSection(channelName + ".formats");
-            for (String name : formatsSection.getKeys(false)) formats.put(name, formatsSection.getString(name));
+            for (String name : formatsSection.getKeys(false))
+                formats.add(new Format(name, formatsSection.getConfigurationSection(name)));
 
             ConfigurationSection chatFilterSection = channelsSection.getConfigurationSection(channelName + ".chat-filter");
             for (String word : chatFilterSection.getKeys(false))

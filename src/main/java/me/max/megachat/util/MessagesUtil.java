@@ -21,13 +21,14 @@
 package me.max.megachat.util;
 
 import me.max.megachat.MegaChat;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 
 public class MessagesUtil {
 
     public static void saveDefaultMessages(MegaChat megaChat) {
-        // yes I know this check is already done in saveResource method but I do this to be able to send messages to the console.
         if (!(new File(megaChat.getDataFolder(), "messages.yml").exists())) {
             megaChat.info("Messages file does not exist, creating it now..");
             saveResource(megaChat, "messages/en.yml", "messages.yml");
@@ -39,6 +40,7 @@ public class MessagesUtil {
         InputStream in = megaChat.getResource(resourcePath);
 
         File outFile = new File(megaChat.getDataFolder(), destination);
+        new File(megaChat.getDataFolder().toString()).mkdirs();
 
         try {
             OutputStream out = new FileOutputStream(outFile);
@@ -55,4 +57,13 @@ public class MessagesUtil {
             megaChat.shutdown();
         }
     }
+
+    public static void saveNewConfig(MegaChat megaChat, String lang) {
+        saveResource(megaChat, "messages/" + lang + ".yml", "messages.yml");
+    }
+
+    public static String getMessage(String path, YamlConfiguration messages) {
+        return ChatColor.translateAlternateColorCodes('&', messages.getString(path));
+    }
+
 }

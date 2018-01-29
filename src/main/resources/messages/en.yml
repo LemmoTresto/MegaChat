@@ -1,0 +1,17 @@
+# This is the messages file.
+# This file contains almost all messages that are sent to players and console
+# You can edit and disable them.
+# Color codes are supported using the color code '&'
+
+# Placeholders: %amount%
+message-cost:
+  enabled: true
+  successful:
+    enabled: true
+    message: "There has been taken %amount% from your balance for sending that message."
+  failed:
+    enabled: true
+    message: "Failed taking %amount% from your balance. Message was cancelled."
+  not-enough:
+    enabled: true
+    message: "You do not have enough money. Message was cancelled."

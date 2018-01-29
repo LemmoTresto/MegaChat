@@ -21,4 +21,9 @@
 package me.max.megachat.commands;
 
 public class ReloadCommand {
+
+    @MegaChatCommand(command = "/megachat reload", usage = "/megachat reload", helpMsg = "This command reloads MegaChat", permission = "megachat.admin.reload", noPermission = "You don't have permission to do this.", aliases = {"mc reload"})
+    public void run() {
+
+    }
 }

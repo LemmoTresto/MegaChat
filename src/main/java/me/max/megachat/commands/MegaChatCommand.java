@@ -18,19 +18,27 @@
  *
  */
 
-package me.max.megachat.hooks;
+package me.max.megachat.commands;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.max.megachat.MegaChat;
-import org.bukkit.entity.Player;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class PlaceholderApiHook {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface MegaChatCommand {
 
-    public PlaceholderApiHook(MegaChat megaChat) {
-        //todo register placeholders.
-    }
+    String command();
 
-    public String setPlaceholders(Player p, String string) {
-        return PlaceholderAPI.setPlaceholders(p, string);
-    }
+    String usage();
+
+    String helpMsg();
+
+    String permission();
+
+    String noPermission();
+
+    String[] aliases();
+
 }

@@ -26,7 +26,7 @@
 
     <groupId>me.max.megachat</groupId>
     <artifactId>MegaChat</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>MegaChat</name>
@@ -46,7 +46,6 @@
     <url>lemmotresto.com</url>
 
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <version>3.6.1</version>
@@ -68,16 +67,45 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <!-- this filter removes translatable component from jar. -->
+                                    <artifact>net.md-5:bungeecord-chat</artifact>
+                                    <excludes>
+                                        <exclude>*/*en_US.properties</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <minimizeJar>true</minimizeJar>
                             <artifactSet>
                                 <includes>
                                     <include>org.bstats:*</include>
+                                    <include>net.kyori.text:*</include>
+                                    <include>com.github.KyoriPowered:text</include>
                                 </includes>
+                                <!-- Lets exclude google code, because the server already has this code in it (guava, etc) -->
+                                <excludes>
+                                    <exclude>com.google.*:*</exclude>
+                                </excludes>
+                                <createDependencyReducedPom>false</createDependencyReducedPom>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>me.max.megachat.dependencies.bstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.KyoriPowered:text</pattern>
+                                    <shadedPattern>me.max.megachat.dependencies.text</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.md_5.bungee</pattern>
+                                    <shadedPattern>${groupId}</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.pl3x.bukkit.chatapi</pattern>
+                                    <shadedPattern>${groupId}</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -122,6 +150,18 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+
+        <!-- billy's repo for chatcomponent api. -->
+        <repository>
+            <id>pl3x-repo</id>
+            <url>http://pl3x.net/plugin/repository/everything/</url>
+        </repository>
+
+        <!-- protocollib -->
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+        </repository>
     </repositories>
 
 
@@ -162,6 +202,21 @@
             <groupId>com.github.KyoriPowered</groupId>
             <artifactId>text</artifactId>
             <version>v1.12-1.2.0</version>
+        </dependency>
+
+        <!-- billy's chatcomponent api for craftbukkit -->
+        <dependency>
+            <groupId>net.pl3x.bukkit.chatapi</groupId>
+            <artifactId>ChatComponentAPI</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- protocollib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.3.0</version>
         </dependency>
     </dependencies>
 </project>

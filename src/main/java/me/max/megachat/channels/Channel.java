@@ -33,7 +33,7 @@ public class Channel {
     private List<Player> members;
     private ChannelType type;
 
-    private Map<String, String> formats;
+    private List<Format> formats;
 
     private List<World> worlds;
 
@@ -45,7 +45,7 @@ public class Channel {
     private boolean autoJoin;
 
 
-    public Channel(String name, ChannelType type, List<Player> members, Map<String, String> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
+    public Channel(String name, ChannelType type, List<Player> members, List<Format> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
         this.name = name;
         this.type = type;
         this.members = members;
@@ -67,16 +67,16 @@ public class Channel {
         members.remove(member);
     }
 
-    public void addFormat(String name, String format) {
-        formats.put(name, format);
+    public void addFormat(Format format) {
+        formats.add(format);
+    }
+
+    public void removeFormat(Format format) {
+        formats.remove(format);
     }
 
     public void removeFormat(String name) {
-        formats.remove(name);
-    }
-
-    public String getFormat(String name) {
-        return formats.getOrDefault(name, null);
+        removeFormat(getFormat(name));
     }
 
     public void addWorld(World world) {
@@ -111,7 +111,7 @@ public class Channel {
         return worlds;
     }
 
-    public Map<String, String> getFormats() {
+    public List<Format> getFormats() {
         return formats;
     }
 
@@ -123,7 +123,7 @@ public class Channel {
         this.chatRange = chatRange;
     }
 
-    public void setFormats(Map<String, String> formats) {
+    public void setFormats(List<Format> formats) {
         this.formats = formats;
     }
 
@@ -173,5 +173,12 @@ public class Channel {
             if (p.getLocation().distance(player.getLocation()) <= getChatRange()) playersInRange.add(p);
         }
         return playersInRange;
+    }
+
+    public Format getFormat(String name) {
+        for (Format format : formats) {
+            if (format.getGroupName().equals(name)) return format;
+        }
+        return null;
     }
 }

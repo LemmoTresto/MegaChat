@@ -63,4 +63,16 @@ public class Api {
         return channelManager.getChannelList();
     }
 
+    public void addChannel(Channel channel) {
+        channelManager.addChannel(channel);
+    }
+
+    public void removeChannel(Channel channel) {
+        channelManager.removeChannel(channel);
+    }
+
+    public void removeChannelByName(String name) {
+        channelManager.removeChannel(name);
+    }
+
 }

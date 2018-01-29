@@ -61,7 +61,11 @@ public class VaultHook {
         return econ;
     }
 
-    public void takeMessageCost(Player p, double messageCost) {
-        getEcon().withdrawPlayer(p, messageCost);
+    public boolean takeMessageCost(Player p, double messageCost) {
+        if (getEcon().getBalance(p) >= messageCost) {
+            getEcon().withdrawPlayer(p, messageCost);
+            return true;
+        }
+        return false;
     }
 }

@@ -26,8 +26,9 @@ import java.io.*;
 
 public class ConfigUtil {
 
+    //todo should probably rewrite this and more into a file manager.
+
     public static void saveDefaultConfig(MegaChat megaChat) {
-        // yes I know this check is already done in saveResource method but I do this to be able to send messages to the console.
         if (!(new File(megaChat.getDataFolder(), "config.yml").exists())) {
             megaChat.info("Config file does not exist, creating it now..");
             saveResource(megaChat, "configs/en.yml", "config.yml");
@@ -39,6 +40,7 @@ public class ConfigUtil {
         InputStream in = megaChat.getResource(resourcePath);
 
         File outFile = new File(megaChat.getDataFolder(), destination);
+        new File(megaChat.getDataFolder().toString()).mkdirs();
 
         try {
             OutputStream out = new FileOutputStream(outFile);
@@ -54,6 +56,10 @@ public class ConfigUtil {
             ex.printStackTrace();
             megaChat.shutdown();
         }
+    }
+
+    public static void saveNewConfig(MegaChat megaChat, String lang) {
+        saveResource(megaChat, "configs/" + lang + ".yml", "config.yml");
     }
 
 }

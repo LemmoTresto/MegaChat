@@ -1,5 +1,5 @@
 # Do not touch! This is for the plugin only.
-version: "1.0"
+version: ${project.version}
 current-language: "english"
 
 # Supported languages: english
@@ -7,6 +7,9 @@ language: "english"
 
 # 0 = No debug, 1 = Debug without stacktrace's, 2 = Debug with stacktrace's.
 debug-mode: 0
+
+# Try to kill other conflicting plugins?
+kill-conflicting-plugins: true
 
 # Is metrics enabled? Defaults to true.
 metrics: true
@@ -28,7 +31,7 @@ per-world-chat:
 
 # All channels for chat.
 #
-# The chat channel with
+# Setting something to zero or making it a blank string disables the feature.
 #
 # Formats:
 # Every channel has the default format. This format is created for every Player who does not have a primary group
@@ -56,7 +59,7 @@ per-world-chat:
 # A click command is what gets auto typed when you click on that part of the message.
 #
 # For all these options you can use all Placeholders from MegaChat
-# You can see all the placeholders here: https://github.com/
+# You can see all the placeholders here: https://github.com/MaxiMiniJaniJos/MegaChat/wiki/Placeholders
 # We also support the PlaceHolder API.
 #
 # Chat range. The range in blocks a player needs to be to receive the message. Setting this to 0 disables it.
@@ -75,10 +78,10 @@ channels:
     formats:
       default:
         format: "<%channel% %prefix% %name% %suffix%>: &r%message%"
-        channel: "[%name%]"
+        channel: "&f[Global]&r"
         prefix: "[Default]"
         name: "%displayname%"
-        suffix: "is a noob"
+        suffix: "is a %random_placeholder%"
         tooltips:
           channel: "There are %users% in this channel!\nThere are %active% chatters here."
           prefix: "This is the default player group.\nNext group: Owner"

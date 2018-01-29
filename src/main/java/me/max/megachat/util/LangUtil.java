@@ -18,19 +18,30 @@
  *
  */
 
-package me.max.megachat.hooks;
+package me.max.megachat.util;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.max.megachat.MegaChat;
-import org.bukkit.entity.Player;
 
-public class PlaceholderApiHook {
+import java.io.File;
 
-    public PlaceholderApiHook(MegaChat megaChat) {
-        //todo register placeholders.
+public class LangUtil {
+
+    private static void renameFiles(String path) {
+        File configFile = new File(path, "config.yml");
+        File messagesFile = new File(path, "messages.yml");
+
+        configFile.renameTo(new File(path, "config-" + System.currentTimeMillis() + ".yml.old"));
+        messagesFile.renameTo(new File(path, "messages-" + System.currentTimeMillis() + ".yml.old"));
     }
 
-    public String setPlaceholders(Player p, String string) {
-        return PlaceholderAPI.setPlaceholders(p, string);
+    private static void writeNewFiles(MegaChat megaChat, String lang) {
+        ConfigUtil.saveNewConfig(megaChat, lang);
+        MessagesUtil.saveNewConfig(megaChat, lang);
     }
+
+    public static void updateFiles(MegaChat megaChat, String lang) {
+        renameFiles(megaChat.getDataFolder().toString());
+        writeNewFiles(megaChat, lang);
+    }
+
 }
