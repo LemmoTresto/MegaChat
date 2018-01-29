@@ -26,6 +26,7 @@ import me.max.megachat.channels.ChannelManager;
 import me.max.megachat.hooks.PlaceholderApiHook;
 import me.max.megachat.hooks.ProtocolLibHook;
 import me.max.megachat.hooks.VaultHook;
+import me.max.megachat.listeners.ChatListener;
 import me.max.megachat.listeners.PlayerJoinListener;
 import me.max.megachat.listeners.PlayerQuitListener;
 import me.max.megachat.listeners.WorldChangeListener;
@@ -92,7 +93,7 @@ public final class MegaChat extends JavaPlugin {
         //init listeners which register themselves.
         info("Initialising listeners..");
         try {
-            //new ChatListener(this);
+            new ChatListener(this);
             new PlayerJoinListener(this);
             new PlayerQuitListener(this);
             new WorldChangeListener(this);
