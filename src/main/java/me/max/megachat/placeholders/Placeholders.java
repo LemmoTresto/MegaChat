@@ -18,26 +18,23 @@
  *
  */
 
-package me.max.megachat.api.events;
+package me.max.megachat.placeholders;
 
-import me.max.megachat.channels.Channel;
+import me.max.megachat.MegaChat;
 import org.bukkit.entity.Player;
 
-public class ChannelLeaveEvent extends MegaChatEvent {
+//todo
+public enum Placeholders {
+    active {
+        String replacePlaceholder(MegaChat megaChat, Player p, String s) {
+            return s.replace("%active%", String.valueOf(megaChat.getChannelManager().getChannelByPlayer(p).getActiveChatters().size()));
+        }
+    };
 
-    private Channel channel;
-    private Player player;
-
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
+    public String replacePlaceholders(MegaChat megaChat, Player p, String s) {
+        for (int i = 0; i < Placeholders.values().length; i++) {
+            //todo
+        }
+        return s;
     }
 }

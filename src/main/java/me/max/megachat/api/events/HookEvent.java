@@ -20,24 +20,7 @@
 
 package me.max.megachat.api.events;
 
-import me.max.megachat.channels.Channel;
-import org.bukkit.entity.Player;
+//todo for messages add in mentions for other plugins to be able to add stuff like that. (e.g. guilds)
 
-public class ChannelLeaveEvent extends MegaChatEvent {
-
-    private Channel channel;
-    private Player player;
-
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
+public class HookEvent extends MegaChatEvent {
 }

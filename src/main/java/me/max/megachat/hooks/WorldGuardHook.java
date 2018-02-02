@@ -18,26 +18,15 @@
  *
  */
 
-package me.max.megachat.api.events;
+package me.max.megachat.hooks;
 
-import me.max.megachat.channels.Channel;
-import org.bukkit.entity.Player;
+import me.max.megachat.MegaChat;
 
-public class ChannelLeaveEvent extends MegaChatEvent {
+public class WorldGuardHook {
 
-    private Channel channel;
-    private Player player;
+    private MegaChat megaChat;
 
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
+    public WorldGuardHook(MegaChat megaChat) {
+        this.megaChat = megaChat;
     }
 }

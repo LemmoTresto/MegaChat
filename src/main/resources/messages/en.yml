@@ -1,6 +1,10 @@
 # This is the messages file.
+#
 # This file contains almost all messages that are sent to players and console
 # You can edit and disable them.
+#
+# Placeholder API is supported and also all placeholders from the wiki.
+#
 # Color codes are supported using the color code '&'
 
 # Placeholders: %amount%

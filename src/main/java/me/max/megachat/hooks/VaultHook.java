@@ -22,7 +22,7 @@ package me.max.megachat.hooks;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -30,7 +30,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class VaultHook {
 
     private Economy econ = null;
-    private Permission perms = null;
     private Chat chat = null;
 
     public VaultHook() {
@@ -61,11 +60,8 @@ public class VaultHook {
         return econ;
     }
 
-    public boolean takeMessageCost(Player p, double messageCost) {
-        if (getEcon().getBalance(p) >= messageCost) {
-            getEcon().withdrawPlayer(p, messageCost);
-            return true;
-        }
-        return false;
+    public EconomyResponse takeMessageCost(Player p, double messageCost) {
+        if (getEcon().getBalance(p) < messageCost) return null;
+        return getEcon().withdrawPlayer(p, messageCost);
     }
 }

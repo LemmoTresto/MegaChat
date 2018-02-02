@@ -22,7 +22,7 @@ package me.max.megachat.api.events;
 
 import me.max.megachat.channels.Channel;
 
-public class ChannelRemovalEvent {
+public class ChannelRemovalEvent extends MegaChatEvent {
 
     private Channel channel;
 

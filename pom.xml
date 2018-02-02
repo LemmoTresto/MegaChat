@@ -151,12 +151,6 @@
             <url>https://jitpack.io</url>
         </repository>
 
-        <!-- billy's repo for chatcomponent api. -->
-        <repository>
-            <id>pl3x-repo</id>
-            <url>http://pl3x.net/plugin/repository/everything/</url>
-        </repository>
-
         <!-- protocollib -->
         <repository>
             <id>dmulloy2-repo</id>
@@ -202,14 +196,6 @@
             <groupId>com.github.KyoriPowered</groupId>
             <artifactId>text</artifactId>
             <version>v1.12-1.2.0</version>
-        </dependency>
-
-        <!-- billy's chatcomponent api for craftbukkit -->
-        <dependency>
-            <groupId>net.pl3x.bukkit.chatapi</groupId>
-            <artifactId>ChatComponentAPI</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- protocollib -->

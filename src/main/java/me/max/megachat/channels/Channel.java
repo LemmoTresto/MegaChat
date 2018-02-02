@@ -37,21 +37,25 @@ public class Channel {
 
     private List<World> worlds;
 
+    public List<Player> activeChatters;
+
     //zero or null means off.
     private int chatRange;
     private double messageCost;
+    private int messageCooldown;
     private Map<String, String> chatFilter;
 
     private boolean autoJoin;
 
 
-    public Channel(String name, ChannelType type, List<Player> members, List<Format> formats, List<World> worlds, int chatRange, double messageCost, Map<String, String> chatFilter, boolean autoJoin) {
+    public Channel(String name, ChannelType type, List<Player> members, List<Format> formats, List<World> worlds, int chatRange, double messageCost, int messageCooldown, Map<String, String> chatFilter, boolean autoJoin) {
         this.name = name;
         this.type = type;
         this.members = members;
         this.formats = formats;
         this.worlds = worlds;
         this.chatRange = chatRange;
+        this.messageCooldown = messageCooldown;
         this.messageCost = messageCost;
         this.chatFilter = chatFilter;
         this.autoJoin = autoJoin;
@@ -180,5 +184,29 @@ public class Channel {
             if (format.getGroupName().equals(name)) return format;
         }
         return null;
+    }
+
+    public int getMessageCooldown() {
+        return messageCooldown;
+    }
+
+    public List<Player> getActiveChatters() {
+        return activeChatters;
+    }
+
+    public void setActiveChatters(List<Player> activeChatters) {
+        this.activeChatters = activeChatters;
+    }
+
+    public void setMessageCooldown(int messageCooldown) {
+        this.messageCooldown = messageCooldown;
+    }
+
+    public void addActiveChatter(Player p) {
+        if (!activeChatters.contains(p)) activeChatters.add(p);
+    }
+
+    public void removeActiveChatter(Player p) {
+        if (activeChatters.contains(p)) activeChatters.remove(p);
     }
 }

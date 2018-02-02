@@ -20,4 +20,6 @@
 
 package me.max.megachat.api.events;
 
+//todo finish the events with cancelled and other SET methods.
+
 public abstract class MegaChatEvent {}

@@ -20,6 +20,11 @@
 
 package me.max.megachat.commands;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,5 +35,25 @@ public class CommandHandler {
     public CommandHandler() {
     }
 
+    public void registerCommand(Object obj) {
+        for (Method method : obj.getClass().getMethods()) {
+            if (method.isAnnotationPresent(MegaChatCommand.class)) {
+                commandClasses.add(obj);
+                return;
+            }
+        }
+    }
 
+    public boolean handle(CommandSender sender, Command command, String[] args) throws InvocationTargetException, IllegalAccessException {
+        for (Object obj : commandClasses) {
+            for (Method method : obj.getClass().getMethods()) {
+                if (method.isAnnotationPresent(MegaChatCommand.class)) {
+                    if (method.getAnnotation(MegaChatCommand.class).command().equalsIgnoreCase(command.getName())) {
+                        return (boolean) method.invoke(sender, args);
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

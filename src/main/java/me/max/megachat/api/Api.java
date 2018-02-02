@@ -68,11 +68,18 @@ public class Api {
     }
 
     public void removeChannel(Channel channel) {
-        channelManager.removeChannel(channel);
+        channelManager.removeChannelByName(channel);
     }
 
     public void removeChannelByName(String name) {
-        channelManager.removeChannel(name);
+        channelManager.removeChannelByName(name);
     }
+
+    public Channel getAutoJoinChannel() {
+        return channelManager.getAutoJoinChannel();
+    }
+
+
+
 
 }

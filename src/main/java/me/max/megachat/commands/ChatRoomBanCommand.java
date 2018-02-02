@@ -18,26 +18,20 @@
  *
  */
 
-package me.max.megachat.api.events;
+package me.max.megachat.commands;
 
-import me.max.megachat.channels.Channel;
-import org.bukkit.entity.Player;
+import me.max.megachat.MegaChat;
+import org.bukkit.command.CommandSender;
 
-public class ChannelLeaveEvent extends MegaChatEvent {
+public class ChatRoomBanCommand {
 
-    private Channel channel;
-    private Player player;
+    private MegaChat megaChat;
 
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
+    public ChatRoomBanCommand(MegaChat megaChat) {
+        this.megaChat = megaChat;
     }
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
+    public boolean execute(CommandSender sender, String[] args) {
+        return true;
     }
 }

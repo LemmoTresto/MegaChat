@@ -20,53 +20,13 @@
 
 package me.max.megachat.hooks;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.max.megachat.MegaChat;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import me.max.megachat.listeners.PacketChatListener;
 
 public class ProtocolLibHook {
 
-    private ProtocolManager protocolManager;
-    private MegaChat megaChat;
-
     public ProtocolLibHook(MegaChat megaChat) {
-        this.megaChat = megaChat;
-        protocolManager = ProtocolLibrary.getProtocolManager();
-
-        protocolManager.addPacketListener(new PacketAdapter(megaChat, ListenerPriority.HIGHEST, PacketType.Play.Server.CHAT) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                if (event.getPacketType() == PacketType.Play.Server.CHAT) {
-                    PacketContainer packet = event.getPacket();
-
-                    String raw = packet.getChatComponents().read(0).getJson();
-
-                    JSONObject json = null;
-                    try {
-                        json = (JSONObject) (new JSONParser()).parse(raw);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        event.setCancelled(true);
-                    }
-
-                    Object obj = json.get("translate");
-                    if (obj == null) {
-                        //it's normal chat (we process it)
-                        WrappedChatComponent chatComponent = packet.getChatComponents().read(0);
-                        //todo
-
-                    }
-                }
-            }
-        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketChatListener(megaChat));
     }
 }

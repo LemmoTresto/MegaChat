@@ -30,10 +30,7 @@ import me.max.megachat.listeners.ChatListener;
 import me.max.megachat.listeners.PlayerJoinListener;
 import me.max.megachat.listeners.PlayerQuitListener;
 import me.max.megachat.listeners.WorldChangeListener;
-import me.max.megachat.util.ConfigUtil;
-import me.max.megachat.util.LangUtil;
-import me.max.megachat.util.MessagesUtil;
-import me.max.megachat.util.PluginKillUtil;
+import me.max.megachat.util.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,8 +45,8 @@ public final class MegaChat extends JavaPlugin {
     private ChannelManager channelManager;
     private Metrics metrics;
     private PlaceholderApiHook placeholderApiHook = null;
-    private VaultHook vaultHook = null;
     private ProtocolLibHook protocolLibHook = null;
+    private VaultHook vaultHook = null;
     private YamlConfiguration messagesFile = null;
 
     //todo add debug messages correctly.
@@ -60,18 +57,21 @@ public final class MegaChat extends JavaPlugin {
         ConfigUtil.saveDefaultConfig(this);
         MessagesUtil.saveDefaultMessages(this);
         reloadConfig();
+        reloadMessgaes();
 
-        messagesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "messages.yml"));
-
+        //look if the user wants me to kill conflicting plugins.
         if (getConfig().getBoolean("kill-conflicting-plugins")) {
             boolean succeeded = PluginKillUtil.killPlugins(PluginKillUtil.findConflictingPlugins());
             if (succeeded) debug("Killed conflicting plugins");
         }
 
-        //todo add config language changing.
         //check if the desired language is used if not copy
-        if (!getConfig().getString("current-language").equalsIgnoreCase(getConfig().getString("language"))) {
-            LangUtil.updateFiles(this, getConfig().getString("language"));
+        if (!LangUtil.supportedLanguages.contains(getConfig().getString("language"))) {
+            if (!getConfig().getString("current-language").equalsIgnoreCase(getConfig().getString("language"))) {
+                LangUtil.updateFiles(this, getConfig().getString("language"));
+                reloadConfig();
+                reloadMessgaes();
+            }
         }
         //setup bstats metrics
         if (getConfig().getBoolean("metrics")) {
@@ -129,7 +129,7 @@ public final class MegaChat extends JavaPlugin {
         //hooks
         info("Initialising hooks..");
         try {
-            if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+            if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib") && VersionUtil.supportsJson()) {
                 protocolLibHook = new ProtocolLibHook(this);
                 info("Hooks - Successfully hooked into ProtocolLib.");
             }
@@ -205,5 +205,9 @@ public final class MegaChat extends JavaPlugin {
 
     public ProtocolLibHook getProtocolLibHook() {
         return protocolLibHook;
+    }
+
+    public void reloadMessgaes() {
+        messagesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "messages.yml"));
     }
 }

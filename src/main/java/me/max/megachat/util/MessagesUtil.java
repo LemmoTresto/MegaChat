@@ -21,8 +21,6 @@
 package me.max.megachat.util;
 
 import me.max.megachat.MegaChat;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 
@@ -60,10 +58,6 @@ public class MessagesUtil {
 
     public static void saveNewConfig(MegaChat megaChat, String lang) {
         saveResource(megaChat, "messages/" + lang + ".yml", "messages.yml");
-    }
-
-    public static String getMessage(String path, YamlConfiguration messages) {
-        return ChatColor.translateAlternateColorCodes('&', messages.getString(path));
     }
 
 }

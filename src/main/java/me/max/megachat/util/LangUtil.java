@@ -23,8 +23,22 @@ package me.max.megachat.util;
 import me.max.megachat.MegaChat;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LangUtil {
+
+    public enum SupportedLanguages {EN}
+
+    public static List<String> supportedLanguages = new ArrayList<String>();
+
+
+    static {
+        for (SupportedLanguages supportedLanguage : SupportedLanguages.values()) {
+            if (!supportedLanguages.contains(supportedLanguage.toString()))
+                supportedLanguages.add(supportedLanguage.toString());
+        }
+    }
 
     private static void renameFiles(String path) {
         File configFile = new File(path, "config.yml");

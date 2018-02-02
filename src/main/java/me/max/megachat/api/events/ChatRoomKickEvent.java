@@ -20,24 +20,5 @@
 
 package me.max.megachat.api.events;
 
-import me.max.megachat.channels.Channel;
-import org.bukkit.entity.Player;
-
-public class ChannelLeaveEvent extends MegaChatEvent {
-
-    private Channel channel;
-    private Player player;
-
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
+public class ChatRoomKickEvent extends MegaChatEvent {
 }

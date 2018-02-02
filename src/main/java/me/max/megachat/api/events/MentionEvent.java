@@ -23,7 +23,7 @@ package me.max.megachat.api.events;
 import me.max.megachat.channels.Channel;
 import org.bukkit.entity.Player;
 
-public class MentionEvent {
+public class MentionEvent extends MegaChatEvent {
 
     private Channel channel;
     private String message;

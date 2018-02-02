@@ -35,6 +35,10 @@ public class PluginKillUtil {
         Plugin ec = Bukkit.getPluginManager().getPlugin("EssentialsChat");
         if (ec != null && ec.isEnabled()) conflictingPlugins.add(ec);
 
+        //DeluxeChat
+        Plugin dc = Bukkit.getPluginManager().getPlugin("DeluxeChat");
+        if (dc != null && dc.isEnabled()) conflictingPlugins.add(dc);
+
         //VentureChat
         Plugin vc = Bukkit.getPluginManager().getPlugin("VentureChat");
         if (vc != null && vc.isEnabled()) conflictingPlugins.add(vc);

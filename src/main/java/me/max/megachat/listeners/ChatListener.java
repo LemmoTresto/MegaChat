@@ -24,19 +24,23 @@ import me.max.megachat.MegaChat;
 import me.max.megachat.api.events.PostProcessMessageEvent;
 import me.max.megachat.api.events.PreProcessMessageEvent;
 import me.max.megachat.channels.Channel;
-import me.max.megachat.util.MessagesUtil;
 import me.max.megachat.util.MetricsUtil;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatListener implements Listener {
 
     private MegaChat megaChat;
+    private Map<Player, Integer> messageCooldowns = new HashMap<>();
 
     public ChatListener(MegaChat megaChat) {
         this.megaChat = megaChat;
@@ -57,21 +61,25 @@ public class ChatListener implements Listener {
         Channel channel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
 
         //set correct format
-        //event.setFormat(getCorrectFormat(channel, event.getPlayer()));
-        event.setFormat(channel.getFormat("default").getFormattedMessage(event.getPlayer()));
+        event.setFormat(getCorrectFormat(channel, event.getPlayer()));
 
-        //todo
+        //todo (cooldown & more)
 
-        //take message cost if there is one.
-        if (!deductCost(channel, event.getPlayer())) {
+        //take message cost if present.
+        int deductCost = deductCost(channel, event.getPlayer());
+        if (deductCost == 0) {
             if (megaChat.getMessages().getBoolean("message-cost.enabled")) {
-                event.getPlayer().sendMessage(MessagesUtil.getMessage("message-cost.failed", megaChat.getMessages()));
+                if (megaChat.getMessages().getBoolean("message-cost.successful.enabled")) {
+                    event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', megaChat.getMessages().getString("message-cost.successful.message")));
+                }
             }
         }
 
         //remove all players & add ones in chatrange.
-        event.getRecipients().removeAll(event.getRecipients());
-        event.getRecipients().addAll(getPlayersInChatRange(channel, event.getPlayer()));
+        if (channel.getChatRange() != 0) {
+            event.getRecipients().removeAll(event.getRecipients());
+            event.getRecipients().addAll(getPlayersInChatRange(channel, event.getPlayer()));
+        }
 
 
         // increment value of messages processed in bstats metrics.
@@ -82,28 +90,46 @@ public class ChatListener implements Listener {
     }
 
     private String getCorrectFormat(Channel channel, Player sender) {
-        // check if vault is here.
-        if (megaChat.getVaultHook() != null) {
-            // try to get primary group name.
-            String group = megaChat.getVaultHook().getChat().getPrimaryGroup(sender);
-            if (channel.getFormat(group) != null) {
-                if (megaChat.getPlaceholderApiHook() != null) {
-                    return megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat(group).getFormattedMessage(sender));
-                }
-                return channel.getFormat(group).getFormattedMessage(sender);
+        //check if protcollib is present
+        //if so we use json messages.
+        if (megaChat.getProtocolLibHook() == null) {
+            //check if we can grab the group using vault
+            if (megaChat.getVaultHook() == null || megaChat.getVaultHook().getChat().getPrimaryGroup(sender) == null || megaChat.getVaultHook().getChat().getPrimaryGroup(sender).equals("")) {
+                //return default group.
+                return channel.getFormat("default").getFormattedMessage(sender);
             }
+            //vault is present get group and return format.
+            return channel.getFormat(megaChat.getVaultHook().getChat().getPrimaryGroup(sender)).getFormattedMessage(sender);
         }
-        // if none found get default or return null.
-        return channel.getFormat("default") != null ? (megaChat.getPlaceholderApiHook() != null ? megaChat.getPlaceholderApiHook().setPlaceholders(sender, channel.getFormat("default").getFormattedMessage(sender)) : channel.getFormat("default").getFormattedMessage(sender)) : null;
+
+        //no protocollib so no json messages.
+        if (megaChat.getVaultHook() == null || megaChat.getVaultHook().getChat().getPrimaryGroup(sender) == null || megaChat.getVaultHook().getChat().getPrimaryGroup(sender).equals("")) {
+            //no vault present so return default group format.
+            return channel.getFormat("default").getFormattedJsonMessage(sender);
+        }
+        //vault is present so return json message with correct format.
+        return channel.getFormat(megaChat.getVaultHook().getChat().getPrimaryGroup(sender)).getFormattedJsonMessage(sender);
     }
 
-    private boolean deductCost(Channel channel, Player sender) {
-        if (channel.getMessageCost() == 0) return true; //0 means this is disabled.
-        return megaChat.getVaultHook().takeMessageCost(sender, channel.getMessageCost());
+    //returns 0, 1, 2 based on what happend.
+    //0: successful.
+    //1: failed
+    //2: not enough money
+    private int deductCost(Channel channel, Player sender) {
+        //no vault so we fail.
+        if (megaChat.getVaultHook() == null) return 1;
+        //take cost
+        EconomyResponse resp = megaChat.getVaultHook().takeMessageCost(sender, channel.getMessageCost());
+        if (resp == null) {
+            //the method returns null if there is not enough money,
+            return 2;
+        }
+        //check response if it was successful.
+        if (resp.transactionSuccess()) return 0;
+        return 1;
     }
 
     private List<Player> getPlayersInChatRange(Channel channel, Player sender) {
-        if (channel.getChatRange() == 0) return channel.getMembers(); //0 means disabled so we return every member.
         return channel.getPlayersInChatRange(sender);
     }
 }

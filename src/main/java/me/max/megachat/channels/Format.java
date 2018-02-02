@@ -20,14 +20,19 @@
 
 package me.max.megachat.channels;
 
+import me.max.megachat.MegaChat;
+import net.kyori.text.Component;
 import net.kyori.text.TextComponent;
 import net.kyori.text.event.ClickEvent;
 import net.kyori.text.event.HoverEvent;
+import net.kyori.text.serializer.ComponentSerializers;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class Format {
+
+    private MegaChat megaChat;
 
     private String groupName;
     private String format;
@@ -47,7 +52,9 @@ public class Format {
     private String name_click_command;
     private String suffix_click_command;
 
-    public Format(String groupName, ConfigurationSection formatSection) {
+    public Format(MegaChat megaChat, String groupName, ConfigurationSection formatSection) {
+        this.megaChat = megaChat;
+
         this.groupName = groupName;
         this.format = formatSection.getString("format");
 
@@ -67,10 +74,24 @@ public class Format {
         this.suffix_click_command = formatSection.getString("click_commands.suffix");
     }
 
-    //todo add placeholder api support.
-    //todo change to one without json and one with json then add it in their respective listeners.
-
     public String getFormattedMessage(Player sender) {
+        String formattedFormat = format;
+        //channel
+        formattedFormat = formattedFormat.replace("%channel%", channel);
+        //prefix
+        formattedFormat = formattedFormat.replace("%prefix%", prefix);
+        //name
+        formattedFormat = formattedFormat.replace("%name%", name.replace("%username%", sender.getName()).replace("%displayname%", sender.getDisplayName()));
+        //suffix
+        formattedFormat = formattedFormat.replace("%suffix%", suffix);
+        //message.
+        formattedFormat = formattedFormat.replace("%message%", "%2$s");
+
+        if (megaChat.getPlaceholderApiHook() == null) return formattedFormat;
+        return megaChat.getPlaceholderApiHook().setPlaceholders(sender, formattedFormat);
+    }
+
+    public String getFormattedJsonMessage(Player sender) {
         String formattedFormat = ChatColor.translateAlternateColorCodes('&', format);
 
         //channel
@@ -81,7 +102,7 @@ public class Format {
         if (!channel_click_command.equalsIgnoreCase("")) {
             channelFormat.clickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, channel_click_command));
         }
-        formattedFormat = formattedFormat.replace("%channel%", channelFormat.build().toString());
+        formattedFormat = formattedFormat.replace("%channel%", toJson(channelFormat.build()));
 
         //prefix
         TextComponent.Builder prefixFormat = TextComponent.builder(ChatColor.translateAlternateColorCodes('&', prefix));
@@ -91,7 +112,7 @@ public class Format {
         if (!prefix_click_command.equalsIgnoreCase("")) {
             prefixFormat.clickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, prefix_click_command));
         }
-        formattedFormat = formattedFormat.replace("%prefix%", prefixFormat.build().toString());
+        formattedFormat = formattedFormat.replace("%prefix%", toJson(prefixFormat.build()));
 
         //name
         TextComponent.Builder nameFormat = TextComponent.builder(ChatColor.translateAlternateColorCodes('&', name.replace("%username%", sender.getName()).replace("%displayname%", sender.getDisplayName())));
@@ -101,7 +122,7 @@ public class Format {
         if (!name_click_command.equalsIgnoreCase("")) {
             prefixFormat.clickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, name_click_command));
         }
-        formattedFormat = formattedFormat.replace("%name%", nameFormat.build().toString());
+        formattedFormat = formattedFormat.replace("%name%", toJson(nameFormat.build()));
 
         //suffix
         TextComponent.Builder suffixFormat = TextComponent.builder(ChatColor.translateAlternateColorCodes('&', suffix));
@@ -111,9 +132,13 @@ public class Format {
         if (!suffix_click_command.equalsIgnoreCase("")) {
             prefixFormat.clickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, suffix_click_command));
         }
-        formattedFormat = formattedFormat.replace("%suffix%", suffixFormat.build().toString());
+        formattedFormat = formattedFormat.replace("%suffix%", toJson(suffixFormat.build()));
 
         return formattedFormat.replace("%message%", "%2$s");
+    }
+
+    private String toJson(Component c) {
+        return ComponentSerializers.JSON.serialize(c);
     }
 
     public String getGroupName() {

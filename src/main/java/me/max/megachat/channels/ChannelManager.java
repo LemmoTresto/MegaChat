@@ -110,7 +110,7 @@ public class ChannelManager {
             channelList.add(channel);
     }
 
-    public void removeChannel(Channel channel) {
+    public void removeChannelByName(Channel channel) {
         if (channelList.contains(channel)) channelList.remove(channel);
     }
 
@@ -151,7 +151,7 @@ public class ChannelManager {
         return null;
     }
 
-    public void removeChannel(String name) {
+    public void removeChannelByName(String name) {
         channelList.removeAll(channelList.stream().filter(channel -> channel.getName().equalsIgnoreCase(name))
                 .collect(Collectors.toList()));
     }

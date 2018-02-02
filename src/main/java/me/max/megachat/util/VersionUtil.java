@@ -18,26 +18,17 @@
  *
  */
 
-package me.max.megachat.api.events;
+package me.max.megachat.util;
 
-import me.max.megachat.channels.Channel;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 
-public class ChannelLeaveEvent extends MegaChatEvent {
+public class VersionUtil {
 
-    private Channel channel;
-    private Player player;
-
-    public ChannelLeaveEvent(Channel channel, Player player) {
-        this.channel = channel;
-        this.player = player;
+    public static boolean supportsJson() {
+        return isVersion("1.8") || isVersion("1.9") || isVersion("1.10") || isVersion("1.11") || isVersion("1.12");
     }
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Player getPlayer() {
-        return player;
+    public static boolean isVersion(String ver) {
+        return Bukkit.getVersion().contains(ver) || Bukkit.getServer().getClass().getPackage().getName().contains(ver);
     }
 }

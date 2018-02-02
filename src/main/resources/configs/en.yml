@@ -1,33 +1,139 @@
 # Do not touch! This is for the plugin only.
+# Touching this can break the plugin!
 version: ${project.version}
-current-language: "english"
+current-language: "en"
 
-# Supported languages: english
-language: "english"
+
+
+# NOTES!
+# Before reading and making changes to this config file read this:
+#
+# Read this config file carefully and make all the changes you want.
+# Also make sure to read ALL the comments as they give as much explanation as possible.
+#
+# It also is very important you go through everything on the resource page and the wiki.
+# The wiki can be found here: https://github.com/MaxiMiniJaniJos/MegaChat/wiki
+#
+# There are 2 ways to disable options:
+# One: set 'enabled' to false.
+# Two: set the option to blank or zero.
+# E.g. OPTION: "" or OPTION: [] or OPTION: {} or OPTION: 0
+#
+# The config file supports the PlaceholderAPI.
+# MegaChat also has placeholders of it's own.
+# A complete list of placeholders can be found here: https://github.com/MaxiMiniJaniJos/MegaChat/wiki/Placeholders
+#
+# MegaChat also supports color codes. Use the code '&'
+# E.g. &4 would be dark red.
+#
+# For tooltips or other things that requires anything Multi Line you have to use \n
+# \n means to go to a new line
+#
+# Example:
+# "Hello\nI am Lemmo"
+# This would become:
+# Hello
+# I am Lemmo
+#
+# After making changes to this file you need to save it and preferably reboot the server but you can also reload the plugin with the command:
+# /MegaChat Reload.
+# This will reload the configuration and recreate everything.
+# If this gives errors you should reboot the server.
+# If you still have issues after this you should try to find the mistake in the config file
+#
+# In case of any issues, feedback, or anything else you would like to know about this plugin make sure to go to my Discord!
+# There is a link on the resource page.
+
+
+
+# This is the language you want for the configuration and messages file and other messages.
+# This is NOT case sensitive but you do have to use the country code. E.g. EN instead of English.
+# Supported languages: EN
+language: "en"
+
 
 # 0 = No debug, 1 = Debug without stacktrace's, 2 = Debug with stacktrace's.
+# This can get spammy and should only be used for debugging, reporting issues and support.
 debug-mode: 0
 
+
 # Try to kill other conflicting plugins?
-kill-conflicting-plugins: true
+# This means MegaChat will try to kill other conflicting chat plugins such as EssentialsChat.
+# Killing means it will disable the plugin on startup.
+kill-conflicting-plugins: false
+
 
 # Is metrics enabled? Defaults to true.
+# You can find metrics here: https://bstats.org/plugin/bukkit/MegaChat
+# You can also disable this in the main metrics configuration file in the metrics folder in plugin folder.
 metrics: true
 
-#Do we ignore if chat events are cancelled? Defaults to false.
+
+# Do we ignore if chat events are cancelled? Defaults to false.
+# This is recommended to be false unless you have a conflicting plugin which you need to override.
 ignore-cancelled-chat-events: false
 
+
+# Mentions!
+#
+# A mention is when someone @ your name in chat. The player who is mentioned will receive an optional sound and it will appear in bold for the player as well.
+#
+# Player mentions is the standard form of a mention, you mention a player and the player will receive a sound and the mention appears in bold in chat.
+#
+# Group mentions are the same as player mentions but they are for permission plugin groups!
+#
+# Every kind of mention has their own format, sound, cooldown, title, actionbar and bossbar. This is to prevent mention spamming.
+#
+# MegaChat can send a sound to a player when they get mentioned!
+#
+# The cooldown is the time between doing a specific task (sound, actionbar, title or bossbar)
+# This time is in seconds.
+#
+# Supported sounds:
+#
+#
+mentions:
+  enabled: true
+  player-mentions:
+    enabled: true
+    format: "&l%mention%&r"
+    sound: ""
+    action-bar: ""
+    boss-bar: ""
+    title: ""
+    cooldown: 30
+    tooltip: ""
+    click_command: ""
+  group-mentions:
+    enabled: true
+    format: "&l%mention%&r"
+    sound: ""
+    action-bar: ""
+    boss-bar: ""
+    title: ""
+    cooldown: 30
+    tooltip: ""
+    click_command: ""
+
+
 # Have a separate chat channel per world.
+#
 # All-worlds, do all worlds have a separate chat?
+#
 # Whitelisted world, worlds where there are separated chats. This is not used if all-worlds is set to true
+#
 # Blacklisted worlds, worlds where there is no separate chat. This is not used if all-worlds is set to false
 # Usage for whitelisted and blacklisted worlds: ["WorldName1", "WorldName2", "etc"]
+#
 # Per world chat uses the formats, chat range, message cost and chat filter defined for the channel which has 'auto-join' set to true.
+# However you can also set your own options
+#
 per-world-chat:
   enabled: false
   all-worlds: true
   whitelisted-worlds: []
   blacklisted-worlds: []
+
 
 # All channels for chat.
 #
@@ -66,12 +172,29 @@ per-world-chat:
 #
 # Message cost. This is the cost for sending a message in specified channel. Making this negative grants a player money. Setting this to 0 disables it. Important! You need vault for this to work!
 #
+# The message cooldown is the amount of seconds there needs to be for the chat message to be accepted and sent.
+# If this is not meet a message will be sent to the player. You can find this message in messages.yml
+#
 # Chat filter. Leave blank to disable. Usage: {"word": "replacement", "word2": "replacement"}
 #
 # Auto join. Do you join this channel when joining the server? This can only be 'true' for one channel at a time.
 # Per-world-chat and player created chatrooms have a higher priority over this.
 # The priorities: CHATROOMS > PER-WORLD-CHAT > CHANNELS
 # This means that if there is no chatroom and no per world chat it will automatically go to the channel with auto-join set to true.
+#
+# The worlds option is for channels who you only want in specific worlds.
+# If this is empty it means this channel is accessible for every world.
+#
+# Regions are specific coordinates or worldguard regions which have their own chat for everyone in that region.
+# If you have worldguard installed you can add the worldguard region name to  the worldguard-regions: option.
+#
+# Next to having worldguard you can also use basic coordinates.
+#
+# This works like this:
+# coordinates: {"X1,Y1,Z1": "X2,Y2,Z1"}
+#
+# Example:
+# coordinates: {"100,100,100": "100,100,100"}
 #
 channels:
   global:
@@ -94,8 +217,19 @@ channels:
           suffix: "/pm $username%"
     chat-range: 0
     message-cost: 0
+    message-cooldown: 0
     chat-filter: {"fuck": "fudge", "shit": "poop"}
     auto-join: true
+    worlds: []
+    regions:
+      enabled: false
+      worldguard-regions: ["region-name"]
+      coordinates: {}
+    join-leave-messages:
+      enabled: false
+      first-join-message: "%username% has joined for the first time!"
+      join-message: "%username% joined the server."
+      leave-message: "%username% left the server."
 
 
 
