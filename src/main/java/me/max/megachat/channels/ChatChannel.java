@@ -18,7 +18,7 @@
  *
  */
 
-package me.max.megachat.channels.base;
+package me.max.megachat.channels;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;

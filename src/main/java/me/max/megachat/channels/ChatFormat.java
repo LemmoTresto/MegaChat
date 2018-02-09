@@ -18,7 +18,7 @@
  *
  */
 
-package me.max.megachat.channels.base;
+package me.max.megachat.channels;
 
 import me.max.megachat.MegaChat;
 import net.kyori.text.Component;

@@ -20,8 +20,8 @@
 
 package me.max.megachat.channels.types;
 
-import me.max.megachat.channels.base.ChatChannel;
-import me.max.megachat.channels.base.ChatFormat;
+import me.max.megachat.channels.ChatChannel;
+import me.max.megachat.channels.ChatFormat;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 

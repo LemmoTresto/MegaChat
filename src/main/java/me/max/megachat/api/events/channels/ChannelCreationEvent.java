@@ -21,7 +21,7 @@
 package me.max.megachat.api.events.channels;
 
 import me.max.megachat.api.events.MegaChatEvent;
-import me.max.megachat.channels.base.ChatChannel;
+import me.max.megachat.channels.ChatChannel;
 
 public class ChannelCreationEvent extends MegaChatEvent {
 

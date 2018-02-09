@@ -22,7 +22,7 @@ package me.max.megachat.listeners;
 
 import me.max.megachat.MegaChat;
 import me.max.megachat.channels.ChannelType;
-import me.max.megachat.channels.base.ChatChannel;
+import me.max.megachat.channels.ChatChannel;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

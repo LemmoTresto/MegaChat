@@ -21,7 +21,6 @@
 package me.max.megachat.channels;
 
 import me.max.megachat.MegaChat;
-import me.max.megachat.channels.base.ChatChannel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,7 +21,7 @@
 package me.max.megachat.api.events.messages;
 
 import me.max.megachat.api.events.MegaChatEvent;
-import me.max.megachat.channels.base.ChatChannel;
+import me.max.megachat.channels.ChatChannel;
 import org.bukkit.entity.Player;
 
 public class PreProcessMessageEvent extends MegaChatEvent {

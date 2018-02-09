@@ -24,7 +24,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.max.megachat.MegaChat;
 import me.max.megachat.api.events.messages.PostProcessMessageEvent;
 import me.max.megachat.api.events.messages.PreProcessMessageEvent;
-import me.max.megachat.channels.base.ChatChannel;
+import me.max.megachat.channels.ChatChannel;
 import me.max.megachat.util.MetricsUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
