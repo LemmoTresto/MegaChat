@@ -21,6 +21,10 @@
 package me.max.megachat.channels;
 
 import me.max.megachat.MegaChat;
+import me.max.megachat.channels.types.BasicChatChannel;
+import me.max.megachat.channels.types.PerWorldChatChannel;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.List;
 public class ChannelManager {
 
     private List<ChatChannel> chatChannelList = new ArrayList<>();
+    private ChatMessage lastChatMessage;
 
     private MegaChat megaChat;
 
@@ -54,8 +59,9 @@ public class ChannelManager {
 
     public ChatChannel getAutoJoinChannel() {
         for (ChatChannel chatChannel : chatChannelList) {
-            if (chatChannel.isAutoJoin()) {
-                return chatChannel;
+            if (chatChannel instanceof BasicChatChannel) {
+                BasicChatChannel basicChatChannel = (BasicChatChannel) chatChannel;
+                if (basicChatChannel.isAutojoin()) return basicChatChannel;
             }
         }
         return null;
@@ -64,6 +70,23 @@ public class ChannelManager {
     public ChatChannel getChannelByName(String name) {
         for (ChatChannel chatChannel : chatChannelList) {
             if (chatChannel.getName().equals(name)) return chatChannel;
+        }
+        return null;
+    }
+
+    public PerWorldChatChannel getPerWorldChatChannelByWorld(World world) {
+        for (ChatChannel chatChannel : chatChannelList) {
+            if (chatChannel instanceof PerWorldChatChannel) {
+                PerWorldChatChannel perWorldChatChannel = (PerWorldChatChannel) chatChannel;
+                if (perWorldChatChannel.getWorld().equals(world)) return perWorldChatChannel;
+            }
+        }
+        return null;
+    }
+
+    public ChatChannel getChannelByPlayer(Player p) {
+        for (ChatChannel chatChannel : chatChannelList) {
+            if (chatChannel.getMembers().contains(p)) return chatChannel;
         }
         return null;
     }

@@ -25,6 +25,7 @@ import me.max.megachat.MegaChat;
 import me.max.megachat.api.events.messages.PostProcessMessageEvent;
 import me.max.megachat.api.events.messages.PreProcessMessageEvent;
 import me.max.megachat.channels.ChatChannel;
+import me.max.megachat.channels.types.BasicChatChannel;
 import me.max.megachat.util.MetricsUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -63,18 +64,21 @@ public class ChatListener implements Listener {
         //get chatChannel to forward this message to.
         ChatChannel chatChannel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
 
-        if (!chatChannel.getRegions().isEmpty()) {
-            if (megaChat.getWorldGuardHook() != null) {
-                boolean isInRegion = false;
-                for (ProtectedRegion region : megaChat.getWorldGuardHook().getRegionsOfPlayer(event.getPlayer()).getRegions()) {
-                    if (chatChannel.getRegions().contains(region.getId())) {
-                        isInRegion = true;
-                        break;
+        if (chatChannel instanceof BasicChatChannel) {
+            BasicChatChannel basicChatChannel = (BasicChatChannel) chatChannel;
+            if (!basicChatChannel.getRegions().isEmpty()) {
+                if (megaChat.getWorldGuardHook() != null) {
+                    boolean isInRegion = false;
+                    for (ProtectedRegion region : megaChat.getWorldGuardHook().getRegionsOfPlayer(event.getPlayer()).getRegions()) {
+                        if (basicChatChannel.getRegions().contains(region.getId())) {
+                            isInRegion = true;
+                            break;
+                        }
                     }
-                }
-                if (!isInRegion) {
-                    megaChat.getChannelManager().addPlayerToCorrectChannel(event.getPlayer());
-                    chatChannel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
+                    if (!isInRegion) {
+                        megaChat.getChannelManager().addPlayerToCorrectChannel(event.getPlayer());
+                        chatChannel = megaChat.getChannelManager().getChannelByPlayer(event.getPlayer());
+                    }
                 }
             }
         }

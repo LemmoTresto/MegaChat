@@ -22,14 +22,40 @@ package me.max.megachat.channels.types;
 
 import me.max.megachat.channels.ChatChannel;
 import me.max.megachat.channels.ChatFormat;
-import org.bukkit.World;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
 
 public class ChatRoomChannel extends ChatChannel {
-    public ChatRoomChannel(String name, List<Player> members, List<ChatFormat> chatFormats, List<World> worlds, List<String> regions, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter, boolean autoJoin) {
-        super(name, members, chatFormats, worlds, regions, chatRange, messageCost, messageCooldown, chatBlock, chatFilter, autoJoin);
+
+    private List<OfflinePlayer> offlineMembers;
+
+    public ChatRoomChannel(String name, List<Player> members, List<OfflinePlayer> offlineMembers, List<ChatFormat> chatFormats, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter) {
+        super(name, members, chatFormats, chatRange, messageCost, messageCooldown, chatBlock, chatFilter);
+        this.offlineMembers = offlineMembers;
+    }
+
+    public List<OfflinePlayer> getOfflineMembers() {
+        return offlineMembers;
+    }
+
+    public void setOfflineMembers(List<OfflinePlayer> offlineMembers) {
+        this.offlineMembers = offlineMembers;
+    }
+
+    public void addMember(Player player) {
+        offlineMembers.remove(player);
+        List<Player> members = getMembers();
+        members.add(player);
+        this.setMembers(members);
+    }
+
+    public void removeMember(Player p) {
+        offlineMembers.add(p);
+        List<Player> members = getMembers();
+        members.remove(p);
+        this.setMembers(members);
     }
 }

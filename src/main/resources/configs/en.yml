@@ -272,8 +272,3 @@ channels:
     regions:
       enabled: false
       worldguard-regions: ["region-name", "another-region"]
-
-
-
-
-

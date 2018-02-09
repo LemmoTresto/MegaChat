@@ -30,7 +30,38 @@ import java.util.Map;
 
 public class BasicChatChannel extends ChatChannel {
 
+    private List<World> worlds;
+    private boolean autojoin;
+    private List<String> regions;
+
     public BasicChatChannel(String name, List<Player> members, List<ChatFormat> chatFormats, List<World> worlds, List<String> regions, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter, boolean autoJoin) {
-        super(name, members, chatFormats, worlds, regions, chatRange, messageCost, messageCooldown, chatBlock, chatFilter, autoJoin);
+        super(name, members, chatFormats, chatRange, messageCost, messageCooldown, chatBlock, chatFilter);
+        this.worlds = worlds;
+        this.regions = regions;
+        this.autojoin = autoJoin;
+    }
+
+    public List<World> getWorlds() {
+        return worlds;
+    }
+
+    public void setWorlds(List<World> worlds) {
+        this.worlds = worlds;
+    }
+
+    public List<String> getRegions() {
+        return regions;
+    }
+
+    public void setRegions(List<String> regions) {
+        this.regions = regions;
+    }
+
+    public boolean isAutojoin() {
+        return autojoin;
+    }
+
+    public void setAutojoin(boolean autojoin) {
+        this.autojoin = autojoin;
     }
 }

@@ -20,7 +20,6 @@
 
 package me.max.megachat.channels;
 
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -32,29 +31,23 @@ public abstract class ChatChannel {
     private String name;
     private List<Player> members;
     private List<ChatFormat> chatFormats;
-    private List<World> worlds;
-    private List<String> regions;
     private List<Player> activeChatters = new ArrayList<>();
     private int chatRange;
     private double messageCost;
     private int messageCooldown;
     private List<String> chatBlock;
     private Map<String, String> chatFilter;
-    private boolean autoJoin;
 
 
-    public ChatChannel(String name, List<Player> members, List<ChatFormat> chatFormats, List<World> worlds, List<String> regions, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter, boolean autoJoin) {
+    public ChatChannel(String name, List<Player> members, List<ChatFormat> chatFormats, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter) {
         this.name = name;
         this.members = members;
         this.chatFormats = chatFormats;
-        this.worlds = worlds;
-        this.regions = regions;
         this.chatRange = chatRange;
         this.messageCooldown = messageCooldown;
         this.messageCost = messageCost;
         this.chatBlock = chatBlock;
         this.chatFilter = chatFilter;
-        this.autoJoin = autoJoin;
     }
 
     public void addMember(Player member) {
@@ -71,14 +64,6 @@ public abstract class ChatChannel {
         this.name = name;
     }
 
-    public void setRegions(List<String> regions) {
-        this.regions = regions;
-    }
-
-    public List<String> getRegions() {
-        return regions;
-    }
-
     public void setMessageCooldown(int messageCooldown) {
         this.messageCooldown = messageCooldown;
     }
@@ -93,10 +78,6 @@ public abstract class ChatChannel {
 
     public int getMessageCooldown() {
         return messageCooldown;
-    }
-
-    public void setWorlds(List<World> worlds) {
-        this.worlds = worlds;
     }
 
     public void setMessageCost(double messageCost) {
@@ -117,10 +98,6 @@ public abstract class ChatChannel {
 
     public String getName() {
         return name;
-    }
-
-    public List<World> getWorlds() {
-        return worlds;
     }
 
     public Map<String, String> getChatFilter() {
@@ -151,15 +128,14 @@ public abstract class ChatChannel {
         return chatBlock;
     }
 
-    public void setAutoJoin(boolean autoJoin) {
-        this.autoJoin = autoJoin;
-    }
-
-    public boolean isAutoJoin() {
-        return autoJoin;
-    }
-
     public void setChatBlock(List<String> chatBlock) {
         this.chatBlock = chatBlock;
+    }
+
+    public ChatFormat getChatFormat(String groupname) {
+        for (ChatFormat format : chatFormats) {
+            if (format.getGroupName().equals(groupname)) return format;
+        }
+        return null;
     }
 }

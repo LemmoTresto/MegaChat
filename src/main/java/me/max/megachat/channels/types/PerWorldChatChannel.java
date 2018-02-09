@@ -29,7 +29,19 @@ import java.util.List;
 import java.util.Map;
 
 public class PerWorldChatChannel extends ChatChannel {
-    public PerWorldChatChannel(String name, List<Player> members, List<ChatFormat> chatFormats, List<World> worlds, List<String> regions, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter, boolean autoJoin) {
-        super(name, members, chatFormats, worlds, regions, chatRange, messageCost, messageCooldown, chatBlock, chatFilter, autoJoin);
+
+    private World world;
+
+    public PerWorldChatChannel(String name, List<Player> members, List<ChatFormat> chatFormats, World world, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter) {
+        super(name, members, chatFormats, chatRange, messageCost, messageCooldown, chatBlock, chatFilter);
+        this.world = world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public World getWorld() {
+        return world;
     }
 }
