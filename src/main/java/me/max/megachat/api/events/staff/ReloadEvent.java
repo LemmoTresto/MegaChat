@@ -18,25 +18,32 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.api.events.staff;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.api.events.MegaChatEvent;
+import org.bukkit.command.CommandSender;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class ReloadEvent extends MegaChatEvent {
 
-    String command();
+    final private boolean cancelled;
+    final private boolean succeeded;
+    final private CommandSender requester;
 
-    String usage();
+    public ReloadEvent(boolean cancelled, boolean succeeded, CommandSender requester) {
+        this.cancelled = cancelled;
+        this.succeeded = succeeded;
+        this.requester = requester;
+    }
 
-    String helpMsg();
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-    String permission();
+    public boolean isSucceeded() {
+        return succeeded;
+    }
 
-    String[] aliases();
-
+    public CommandSender getRequester() {
+        return requester;
+    }
 }

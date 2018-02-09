@@ -18,25 +18,21 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.commands.staff;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class ClearChatCommand {
 
-    String command();
-
-    String usage();
-
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
+    //@MegaChatCommand(command = "chat clear")
+    public boolean execute(Player sender, String[] args) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            stringBuilder.append("\n");
+        }
+        Bukkit.broadcastMessage(stringBuilder.toString());
+        return true;
+    }
 
 }

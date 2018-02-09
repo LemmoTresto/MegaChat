@@ -18,25 +18,9 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.api.events.staff;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.api.events.MegaChatEvent;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
-
-    String command();
-
-    String usage();
-
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
-
+public class ClearChatEvent extends MegaChatEvent {
 }

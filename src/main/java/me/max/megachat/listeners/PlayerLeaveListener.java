@@ -18,25 +18,28 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.listeners;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.MegaChat;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class PlayerLeaveListener implements Listener {
 
-    String command();
+    private MegaChat megaChat;
 
-    String usage();
+    public PlayerLeaveListener(MegaChat megaChat) {
+        this.megaChat = megaChat;
 
-    String helpMsg();
+        //register myself.
+        this.megaChat.getServer().getPluginManager().registerEvents(this, megaChat);
+    }
 
-    String permission();
-
-    String[] aliases();
-
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // remove player from its channels.
+        megaChat.getChannelManager().removePlayerFromChannel(event.getPlayer());
+    }
 }

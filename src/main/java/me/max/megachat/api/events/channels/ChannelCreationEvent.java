@@ -18,25 +18,20 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.api.events.channels;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.api.events.MegaChatEvent;
+import me.max.megachat.channels.base.ChatChannel;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class ChannelCreationEvent extends MegaChatEvent {
 
-    String command();
+    private ChatChannel chatChannel;
 
-    String usage();
+    public ChannelCreationEvent(ChatChannel chatChannel) {
+        this.chatChannel = chatChannel;
+    }
 
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
-
+    public ChatChannel getChatChannel() {
+        return chatChannel;
+    }
 }

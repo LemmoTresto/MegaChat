@@ -30,7 +30,15 @@ import java.util.List;
 
 public class ApiManager {
 
-    public List<Object> listeners = new ArrayList<>();
+    private List<Object> listeners = new ArrayList<>();
+
+    public void addListener(Object object) {
+        if (!listeners.contains(object)) listeners.add(object);
+    }
+
+    public void removeListener(Object object) {
+        if (listeners.contains(object)) listeners.remove(object);
+    }
 
     public MegaChatEvent callEvent(MegaChatEvent event) {
         for (MegaChatEventPriority priority : MegaChatEventPriority.values()) {

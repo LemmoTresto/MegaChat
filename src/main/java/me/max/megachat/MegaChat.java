@@ -26,27 +26,36 @@ import me.max.megachat.channels.ChannelManager;
 import me.max.megachat.hooks.PlaceholderApiHook;
 import me.max.megachat.hooks.ProtocolLibHook;
 import me.max.megachat.hooks.VaultHook;
+import me.max.megachat.hooks.WorldGuardHook;
 import me.max.megachat.listeners.ChatListener;
 import me.max.megachat.listeners.PlayerJoinListener;
-import me.max.megachat.listeners.PlayerQuitListener;
+import me.max.megachat.listeners.PlayerLeaveListener;
 import me.max.megachat.listeners.WorldChangeListener;
 import me.max.megachat.util.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class MegaChat extends JavaPlugin {
 
     private static Api api = null;
+
     private ApiManager apiManager;
     private ChannelManager channelManager;
+
     private Metrics metrics;
+
     private PlaceholderApiHook placeholderApiHook = null;
     private ProtocolLibHook protocolLibHook = null;
     private VaultHook vaultHook = null;
+    private WorldGuardHook worldGuardHook = null;
+
     private YamlConfiguration messagesFile = null;
 
     //todo add debug messages correctly.
@@ -59,9 +68,14 @@ public final class MegaChat extends JavaPlugin {
         reloadConfig();
         reloadMessgaes();
 
+
+        List<Plugin> conflictingPlugins = ConflictingPluginUtil.findConflictingPlugins();
+        List<String> conflictingPl = new ArrayList<>();
+        for (Plugin pl : conflictingPlugins) conflictingPl.add(pl.getName());
+        warning("Found conflicting plugins: " + String.join(", ", conflictingPl));
         //look if the user wants me to kill conflicting plugins.
         if (getConfig().getBoolean("kill-conflicting-plugins")) {
-            boolean succeeded = PluginKillUtil.killPlugins(PluginKillUtil.findConflictingPlugins());
+            boolean succeeded = ConflictingPluginUtil.killPlugins(conflictingPlugins);
             if (succeeded) debug("Killed conflicting plugins");
         }
 
@@ -95,7 +109,7 @@ public final class MegaChat extends JavaPlugin {
         try {
             new ChatListener(this);
             new PlayerJoinListener(this);
-            new PlayerQuitListener(this);
+            new PlayerLeaveListener(this);
             new WorldChangeListener(this);
             info("Initialised listeners successfully.");
         } catch (Exception e) {
@@ -140,6 +154,9 @@ public final class MegaChat extends JavaPlugin {
             if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
                 vaultHook = new VaultHook();
                 info("Hooks - Successfully hooked into Vault.");
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+                worldGuardHook = new WorldGuardHook(this);
             }
         } catch (Exception e) {
             warning("Hooks - Something went wrong initialising.");
@@ -205,6 +222,10 @@ public final class MegaChat extends JavaPlugin {
 
     public ProtocolLibHook getProtocolLibHook() {
         return protocolLibHook;
+    }
+
+    public WorldGuardHook getWorldGuardHook() {
+        return worldGuardHook;
     }
 
     public void reloadMessgaes() {

@@ -31,7 +31,7 @@ public class ConfigUtil {
     public static void saveDefaultConfig(MegaChat megaChat) {
         if (!(new File(megaChat.getDataFolder(), "config.yml").exists())) {
             megaChat.info("Config file does not exist, creating it now..");
-            saveResource(megaChat, "configs/en.yml", "config.yml");
+            saveResource(megaChat, "configs" + File.separator + "en.yml", "config.yml");
             megaChat.info("Written config file successfully.");
         }
     }
@@ -59,7 +59,7 @@ public class ConfigUtil {
     }
 
     public static void saveNewConfig(MegaChat megaChat, String lang) {
-        saveResource(megaChat, "configs/" + lang + ".yml", "config.yml");
+        saveResource(megaChat, "configs" + File.separator + lang + ".yml", "config.yml");
     }
 
 }

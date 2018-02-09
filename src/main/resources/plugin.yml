@@ -4,4 +4,4 @@ main: me.max.megachat.MegaChat
 authors: [LemmoTresto]
 description: An easy to use chat plugin with many features.
 website: lemmotresto.com
-softdepend: [PlaceholderAPI, Vault, ProtocolLib, WorldGuard]
+softdepend: [PlaceholderAPI, Vault, ProtocolLib, WorldGuard, EssentialsChat, VentureChat, DeluxeChat]

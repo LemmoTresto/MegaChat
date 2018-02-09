@@ -18,25 +18,18 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.channels.types;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.channels.base.ChatChannel;
+import me.max.megachat.channels.base.ChatFormat;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+import java.util.List;
+import java.util.Map;
 
-    String command();
-
-    String usage();
-
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
-
+public class ChatRoomChannel extends ChatChannel {
+    public ChatRoomChannel(String name, List<Player> members, List<ChatFormat> chatFormats, List<World> worlds, List<String> regions, int chatRange, double messageCost, int messageCooldown, List<String> chatBlock, Map<String, String> chatFilter, boolean autoJoin) {
+        super(name, members, chatFormats, worlds, regions, chatRange, messageCost, messageCooldown, chatBlock, chatFilter, autoJoin);
+    }
 }

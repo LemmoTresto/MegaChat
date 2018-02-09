@@ -44,5 +44,11 @@ public class PlayerJoinListener implements Listener {
         //todo unless they have a per world chat.
         megaChat.getChannelManager().addPlayerToAutoJoinChannel(event.getPlayer());
 
+        //check if he played before to look if we need to use the first join msg
+        if (!event.getPlayer().hasPlayedBefore()) {
+            if (megaChat.getProtocolLibHook() == null) {
+                //todo
+            }
+        }
     }
 }

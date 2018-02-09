@@ -20,13 +20,47 @@
 
 package me.max.megachat.hooks;
 
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.max.megachat.MegaChat;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldGuardHook {
 
     private MegaChat megaChat;
+    private WorldGuardPlugin plugin;
 
     public WorldGuardHook(MegaChat megaChat) {
         this.megaChat = megaChat;
+
+        plugin = WGBukkit.getPlugin();
+    }
+
+    public ApplicableRegionSet getRegionsOfPlayer(Player p) {
+        return plugin.getRegionContainer().createQuery().getApplicableRegions(p.getLocation());
+    }
+
+    private List<Player> getPlayersInRegion(ProtectedRegion region) {
+        List<Player> playersInRegion = new ArrayList<>();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (getRegionsOfPlayer(p).getRegions().contains(region)) playersInRegion.add(p);
+        }
+        return playersInRegion;
+    }
+
+    public List<Player> getPlayersInRegionOfPlayer(Player p) {
+        List<Player> playersInRegion = new ArrayList<>();
+        for (ProtectedRegion region : getRegionsOfPlayer(p)) {
+            //check if this region is in the channel.
+            if (megaChat.getChannelManager().getChannelByPlayer(p).getRegions().contains(region.getId()))
+                playersInRegion.addAll(getPlayersInRegion(region));
+        }
+        return playersInRegion;
     }
 }

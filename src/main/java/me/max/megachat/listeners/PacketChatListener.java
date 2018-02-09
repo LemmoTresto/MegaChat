@@ -58,7 +58,7 @@ public class PacketChatListener extends PacketAdapter {
                 event.setCancelled(true);
                 return;
             }
-            Component component = ComponentSerializers.JSON.deserialize(json.toString());
+            Component component = ComponentSerializers.JSON.deserialize(json.toJSONString());
 
             // look what for chat it is.
             Object obj = json.get("translate");

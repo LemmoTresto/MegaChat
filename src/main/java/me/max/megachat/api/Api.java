@@ -21,12 +21,9 @@
 package me.max.megachat.api;
 
 import me.max.megachat.api.exceptions.NoListenersFoundException;
-import me.max.megachat.channels.Channel;
 import me.max.megachat.channels.ChannelManager;
-import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
 public class Api {
 
@@ -42,44 +39,11 @@ public class Api {
         int eventListenerMethods = 0;
         for (Method method : listener.getClass().getMethods()) if (method.isAnnotationPresent(MegaChatEventHandler.class)) eventListenerMethods++;
         if (eventListenerMethods == 0) throw new NoListenersFoundException(listener);
-        if (apiManager.listeners.contains(listener)) return;
-        apiManager.listeners.add(listener);
+        apiManager.addListener(listener);
     }
 
     public void unregisterEvents(Object listener) {
-        if (!apiManager.listeners.contains(listener)) return;
-        apiManager.listeners.remove(listener);
+        apiManager.removeListener(listener);
     }
-
-    public Channel getChannelByName(String name) {
-        return channelManager.getChannelByName(name);
-    }
-
-    public Channel getChannelByPlayer(Player player) {
-        return channelManager.getChannelByPlayer(player);
-    }
-
-    public List<Channel> getChannelList() {
-        return channelManager.getChannelList();
-    }
-
-    public void addChannel(Channel channel) {
-        channelManager.addChannel(channel);
-    }
-
-    public void removeChannel(Channel channel) {
-        channelManager.removeChannelByName(channel);
-    }
-
-    public void removeChannelByName(String name) {
-        channelManager.removeChannelByName(name);
-    }
-
-    public Channel getAutoJoinChannel() {
-        return channelManager.getAutoJoinChannel();
-    }
-
-
-
 
 }

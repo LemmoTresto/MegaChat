@@ -21,8 +21,8 @@
 package me.max.megachat.listeners;
 
 import me.max.megachat.MegaChat;
-import me.max.megachat.channels.Channel;
 import me.max.megachat.channels.ChannelType;
+import me.max.megachat.channels.base.ChatChannel;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -48,11 +48,11 @@ public class WorldChangeListener implements Listener {
                 return;
 
             // check if per-world-chat channel exists.
-            Channel worldChannel = megaChat.getChannelManager().getPerWorldChatByWorld(event.getPlayer().getWorld());
-            if (worldChannel != null) {
+            ChatChannel worldChatChannel = megaChat.getChannelManager().getPerWorldChatByWorld(event.getPlayer().getWorld());
+            if (worldChatChannel != null) {
                 //remove and add player again to right channel.
                 megaChat.getChannelManager().removePlayerFromChannel(event.getPlayer());
-                worldChannel.addMember(event.getPlayer());
+                worldChatChannel.addMember(event.getPlayer());
             }
         }
     }

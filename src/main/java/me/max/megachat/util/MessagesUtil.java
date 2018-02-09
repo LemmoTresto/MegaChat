@@ -29,7 +29,7 @@ public class MessagesUtil {
     public static void saveDefaultMessages(MegaChat megaChat) {
         if (!(new File(megaChat.getDataFolder(), "messages.yml").exists())) {
             megaChat.info("Messages file does not exist, creating it now..");
-            saveResource(megaChat, "messages/en.yml", "messages.yml");
+            saveResource(megaChat, "messages" + File.separator + "en.yml", "messages.yml");
             megaChat.info("Written messages file successfully.");
         }
     }
@@ -57,7 +57,7 @@ public class MessagesUtil {
     }
 
     public static void saveNewConfig(MegaChat megaChat, String lang) {
-        saveResource(megaChat, "messages/" + lang + ".yml", "messages.yml");
+        saveResource(megaChat, "messages" + File.separator + lang + ".yml", "messages.yml");
     }
 
 }

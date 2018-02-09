@@ -73,10 +73,62 @@ metrics: true
 # This is recommended to be false unless you have a conflicting plugin which you need to override.
 ignore-cancelled-chat-events: false
 
+# Custom join and leave messages!
+#
+# Have custom join messages with features such as sound!
+#
+# First join is when a player joins the server for the first time!
+#
+# These messages support tooltips and click staff.
+# Use \n for a new line.
+# Use the code '&' for color in the messages!
+#
+# Sound is what sound gets played to all online players.
+#
+# Title is what for title to show to all online players.
+#
+# Actionbar is what for actionbar to show to all online players.
+#
+# Bossbar is what for bossbar to show to all online players.
+#
+join-leave:
+  enabled: false
+  first-join:
+    enabled: true
+    message: ""
+    tooltip: ""
+    click_command: ""
+    sound: ""
+    title: ""
+    actionbar: ""
+    bossbar: ""
+  join:
+    enabled: true
+    message: ""
+    tooltip: ""
+    click_command: ""
+    sound: ""
+    title: ""
+    actionbar: ""
+    bossbar: ""
+  leave:
+    enabled: true
+    message: ""
+    tooltip: ""
+    click_command: ""
+    sound: ""
+    title: ""
+    actionbar: ""
+    bossbar: ""
+
 
 # Mentions!
 #
-# A mention is when someone @ your name in chat. The player who is mentioned will receive an optional sound and it will appear in bold for the player as well.
+# A mention is when someone mentions your name in chat with the prefix in fron of it. The player who is mentioned will receive an optional sound and it will appear in bold for the player as well.
+#
+# An example if the prefix is "@":
+# @LemmoTresto how are you?
+# This would mention the player LemmoTresto.
 #
 # Player mentions is the standard form of a mention, you mention a player and the player will receive a sound and the mention appears in bold in chat.
 #
@@ -94,6 +146,7 @@ ignore-cancelled-chat-events: false
 #
 mentions:
   enabled: true
+  prefix: "@"
   player-mentions:
     enabled: true
     format: "&l%mention%&r"
@@ -175,6 +228,8 @@ per-world-chat:
 # The message cooldown is the amount of seconds there needs to be for the chat message to be accepted and sent.
 # If this is not meet a message will be sent to the player. You can find this message in messages.yml
 #
+# Chat block means that the message will not be sent if it contains any of the words.
+#
 # Chat filter. Leave blank to disable. Usage: {"word": "replacement", "word2": "replacement"}
 #
 # Auto join. Do you join this channel when joining the server? This can only be 'true' for one channel at a time.
@@ -185,16 +240,8 @@ per-world-chat:
 # The worlds option is for channels who you only want in specific worlds.
 # If this is empty it means this channel is accessible for every world.
 #
-# Regions are specific coordinates or worldguard regions which have their own chat for everyone in that region.
+# Regions are worldguard regions which have their own chat for everyone in that region.
 # If you have worldguard installed you can add the worldguard region name to  the worldguard-regions: option.
-#
-# Next to having worldguard you can also use basic coordinates.
-#
-# This works like this:
-# coordinates: {"X1,Y1,Z1": "X2,Y2,Z1"}
-#
-# Example:
-# coordinates: {"100,100,100": "100,100,100"}
 #
 channels:
   global:
@@ -218,18 +265,13 @@ channels:
     chat-range: 0
     message-cost: 0
     message-cooldown: 0
+    chat-block: ["suck my dick", "you deserve cancer"]
     chat-filter: {"fuck": "fudge", "shit": "poop"}
     auto-join: true
     worlds: []
     regions:
       enabled: false
-      worldguard-regions: ["region-name"]
-      coordinates: {}
-    join-leave-messages:
-      enabled: false
-      first-join-message: "%username% has joined for the first time!"
-      join-message: "%username% joined the server."
-      leave-message: "%username% left the server."
+      worldguard-regions: ["region-name", "another-region"]
 
 
 

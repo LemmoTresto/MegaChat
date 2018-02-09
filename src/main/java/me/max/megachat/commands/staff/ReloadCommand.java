@@ -18,25 +18,14 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.commands.staff;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.commands.MegaChatCommand;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class ReloadCommand {
 
-    String command();
+    @MegaChatCommand(command = "/megachat reload", usage = "/megachat reload", helpMsg = "This command reloads MegaChat", permission = "megachat.admin.reload", noPermission = "You don't have permission to do this.", aliases = {"mc reload"})
+    public void run() {
 
-    String usage();
-
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
-
+    }
 }

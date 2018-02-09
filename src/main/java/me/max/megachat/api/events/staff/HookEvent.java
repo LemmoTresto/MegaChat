@@ -18,25 +18,11 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.api.events.staff;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//todo for messages add in mentions for other plugins to be able to add stuff like that. (e.g. guilds)
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+import me.max.megachat.api.events.MegaChatEvent;
 
-    String command();
-
-    String usage();
-
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
-
+public class HookEvent extends MegaChatEvent {
 }

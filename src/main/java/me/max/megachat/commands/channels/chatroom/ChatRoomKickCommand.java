@@ -18,25 +18,26 @@
  *
  */
 
-package me.max.megachat.commands;
+package me.max.megachat.commands.channels.chatroom;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import me.max.megachat.MegaChat;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface MegaChatCommand {
+public class ChatRoomKickCommand {
 
-    String command();
+    private MegaChat megaChat;
 
-    String usage();
+    public ChatRoomKickCommand(MegaChat megaChat) {
+        this.megaChat = megaChat;
+    }
 
-    String helpMsg();
-
-    String permission();
-
-    String[] aliases();
+    public boolean execute(CommandSender sender, String[] args) {
+        if (sender instanceof ConsoleCommandSender) {
+            sender.sendMessage("");
+            return true;
+        }
+        return true;
+    }
 
 }
